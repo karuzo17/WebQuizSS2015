@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<xs:schema
+   xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.nubean.com/schemas/schema.xsd">
+
+<xs:element name="Fragenkatalog">
+	<xs:attribute name="name" type="xs:string"></xs:attribute>
+	<xs:attribute name="anzahl" type="xs:integer"></xs:attribute>
+	
+	<xs:element name="Frage" minOccurs="1" maxOccurs="unbounded">
+		<xs:ComplexType>
+			<sequence>
+				<xs:element name="Fragetext" type="xs:string"></xs:element>   
+   				<xs:element name="Antwort" type="xs:string" minOccurs="4" maxOccurs="4"></xs:element>
+   			</sequence>
+   			<xs:attribute name="timeout" type="xs:integer"></xs:attribute>
+   		</xs:ComplexType>
+   	</xs:element>
+	
+</xs:element>     
+</xs:schema>

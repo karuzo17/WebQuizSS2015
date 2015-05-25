@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<?xml-stylesheet type="text/xsl" href="XMLstylesheet.xsl"?>
+<Fragenkatalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Simple" anzahl="5"
+xsi:noNamespaceSchemaLocation="XMLS.xsd">
+ 
+<Frage timeout="10">
+<Fragetext>
+Welcher Mechanismus kann unter Unix zur Kommunikation über das Netzwerk verwendet werden?
+</Fragetext>
+ <Antwort>
+ Sockets 
+ </Antwort>
+ <Antwort>
+ Message Queues
+ </Antwort>
+ <Antwort>
+ Pipes
+ </Antwort>
+ <Antwort>
+ Semaphore
+ </Antwort>
+ </Frage>
+ <Frage timeout="10">
+ <Fragetext>
+Die Quadratwurzel von 100 ist:
+ </Fragetext>
+ <Antwort>
+ 10
+ </Antwort>
+ <Antwort>
+ 2,76
+ </Antwort>
+ <Antwort>
+ 5
+ </Antwort>
+ <Antwort>
+ 1
+ </Antwort>
+ </Frage>
+ <Frage timeout="10">
+ <Fragetext>
+ 
+Die Hauptstadt von Italien ist:
+ </Fragetext>
+ <Antwort>
+ Rom
+ </Antwort>
+ <Antwort>
+ Athen
+ </Antwort>
+ <Antwort>
+ Bonn
+ </Antwort>
+ <Antwort>
+ Madrid
+ </Antwort>
+ </Frage>
+ <Frage timeout="10">
+ <Fragetext>
+ 
+Spinnen...
+ </Fragetext>
+		<Antwort>
+		...haben 8 Beine
+		</Antwort>
+		<Antwort>
+		...sind Insekten
+		</Antwort>
+		<Antwort>
+		...sind Vögel
+		</Antwort>
+		<Antwort>
+		...werden bis zu 100 Jahre alt
+		</Antwort>
+	</Frage>
+	<Frage timeout="10">
+		<Fragetext>
+		
+Die Hauptstadt von Spanien ist:</Fragetext>
+		<Antwort>
+		Madrid
+		</Antwort>
+		<Antwort>
+		Barcelona
+		</Antwort>
+		<Antwort>
+		Rom
+		</Antwort>
+		<Antwort>
+		London
+		</Antwort>
+	</Frage>
+</Fragenkatalog>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Your_Icon"
+   x="0px"
+   y="0px"
+   width="100px"
+   height="100px"
+   viewBox="0 0 100 100"
+   enable-background="new 0 0 100 100"
+   xml:space="preserve"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="catalog.svg"><metadata
+   id="metadata3005"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+   id="defs3003" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1366"
+   inkscape:window-height="706"
+   id="namedview3001"
+   showgrid="false"
+   inkscape:zoom="5.19"
+   inkscape:cx="50"
+   inkscape:cy="50"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Your_Icon" />
+<path
+   d="M95.484,26H93v-8.161c0-2.056-1.867-3.606-3.843-3.606c-0.368,0-0.93,0.054-1.299,0.161L52.054,24.695  c-0.814,0.235-1.598,1.055-2.198,1.681C49.187,25.928,48.337,26,47.473,26H4.517C2.195,26,0,27.22,0,29.542v45.483  C0,77.346,2.195,79,4.517,79h42.956c0.952,0,1.821-0.329,2.527-0.864C50.706,78.671,51.575,79,52.527,79h42.957  c2.322,0,4.516-1.654,4.516-3.976V29.542C100,27.22,97.806,26,95.484,26z M53.052,27.932l35.63-10.301  c0.083-0.024,0.164-0.029,0.251-0.029C88.944,17.616,89,17.691,89,17.839v45.483c0,0.636-0.66,1.433-1.27,1.609l-35.739,10.67  C51.908,75.625,51.818,76,51.783,76h-0.048C51.71,76,52,75.108,52,75.024V29.542C52,28.906,52.442,28.109,53.052,27.932z M48,75.158  C48,75.623,47.623,76,47.158,76H3.842C3.377,76,3,75.623,3,75.158V29.842C3,29.377,3.377,29,3.842,29h43.317  C47.623,29,48,29.377,48,29.842V75.158z M97,75.024C97,75.48,95.94,76,95.484,76H61.92l27.059-7.764  C91.022,67.646,93,65.45,93,63.322V29h2.484C95.94,29,97,29.085,97,29.542V75.024z"
+   id="path2997"
+   style="fill:#333333" />
+<path
+   d="M51.685,75.024"
+   id="path2999" />
+</svg>
