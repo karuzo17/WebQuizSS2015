@@ -54,9 +54,10 @@
 		float: left;
 }
 
-#loginForm {      
-		margin-top: 200px;
-		margin-left: 200px;
+#loginform {      
+		
+		padding-top:200px;
+		padding-left: 250px;
 }
 
 #catalog { 
