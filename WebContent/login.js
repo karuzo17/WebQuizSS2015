@@ -40,11 +40,21 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
  function empfange(message)
  { 
 	 var text = message.data;
-	 alert(text);
+//	 alert(text);
 	 var json=JSON.parse(text);
-	alert("json:"+json);
-	 alert(json[0].username);
-	 var catDiv = document.getElementById("score");
+//	alert("json:"+json);
+//	 alert(json[0].username);
+	 
+	 var playerDiv = document.getElementById("players");
+//	 var frameDiv = document.getElementById("frame");
+//	 frameDiv.removeChild(scoreDiv);
+//	 var score= document.createElement("div");
+//	 score.id="score";
+	 
+	 while(playerDiv.hasChildNodes()){
+		 playerDiv.removeChild(playerDiv.lastChild);
+	 }
+	 
 	 for(var i=0;i<json.length;i++){
 		 var div=document.createElement("div");
 			div.className="playerDiv";
@@ -53,10 +63,17 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 			var divname = document.createTextNode(json[i].username);
 			
 			div.appendChild(divname);
-			div.addEventListener("click",catalogClicked,false);
-			catDiv.appendChild(div);
+			
+			playerDiv.appendChild(div);
 		 
 	 }
+	 
+	 if(json.length===2){
+		 
+		 
+		 createGameStartButton();
+	 }
+//	 frameDiv.appendChild(score);
 // 	var text = message.data;
 // 	//alert("emfange Daten vom Server: "+text);
 // 	// Textfeld zur Ausgabe des Echos vom Server
@@ -78,3 +95,20 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 // 	else 	output.value=text;
 	
  } 
+ 
+ function createGameStartButton(){
+	 
+	 var Button = document.createElement("input");
+	 Button.type="button";
+	 Button.value="Start Game";
+	 Button.id="Button";
+	 
+	 var loginDiv=document.getElementById("loginForm");
+	 loginDiv.appendChild(Button);
+	 Button.addEventListener("click",startGame,false);
+
+ }
+ 
+ function startGame(){
+	 alert("ALARM START ");
+ }

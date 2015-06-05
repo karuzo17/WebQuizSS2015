@@ -54,7 +54,7 @@
 		float: left;
 }
 
-#loginform {      
+#loginForm {      
 		
 		padding-top:200px;
 		padding-left: 250px;
@@ -101,12 +101,12 @@
 
 #loginButton {
 		margin-top: 15px;
-		width: 205px;
+		width: 99px;
 }
 
-#gameStartButton {
+#Button {
 		margin-top: 15px;
-		width: 92px;
+		width: 99px;
 }
 
 #titleIMG {
