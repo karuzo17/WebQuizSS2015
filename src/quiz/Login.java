@@ -21,7 +21,9 @@ import de.fhwgt.quiz.error.QuizError;
 @ServerEndpoint("/Login")
 public class Login {
 	Quiz quiz;
-	JSONArray array;
+	JSONArray array=new JSONArray();
+	
+	
 	@OnError
 	public void error(Session session, Throwable t) 
 	{
@@ -34,11 +36,12 @@ public class Login {
                  EndpointConfig conf) throws JSONException 
 	{
 		Connections.addSession(session);
+		GameConnections.addSession(session, -1);
 		System.out.println("neue hinzugefuegte Session:"+session);
 		
 		quiz=Quiz.getInstance();
 		Collection<Player> players = quiz.getPlayerList();
-		array = new JSONArray();
+		
 		for(Player p:players){
 			JSONObject obj = new JSONObject();
 			obj.put("username", p.getName());
@@ -47,16 +50,23 @@ public class Login {
 			array.put(obj);
 		}
 		String msg = array.toString();
-		for ( int i=0; i < Connections.SessionCount(); i++ ) 
-  	  {    Session s= Connections.getSession(i);
-  	       System.out.println(s);
-  		   try {
-			s.getBasicRemote().sendText(msg, true);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-  	  }
+		System.out.println("New Session from game connection"+GameConnections.getSession((long)-1));
+		System.out.println("ConnectionCountSize"+GameConnections.SessionCount());
+		System.out.println("MSG:"+msg);
+
+			for ( int i=0; i < Connections.SessionCount(); i++ ) 
+	  	  {    
+			
+			Session s= Connections.getSession(i);
+	  	    System.out.println(s);
+	  		   try {
+				s.getBasicRemote().sendText(msg, true);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	  	  }
+		
 		
 	}
 	
@@ -73,10 +83,13 @@ public class Login {
 		obj.put("id", player.getId());
 		array.put(obj);
 		
-		
+		GameConnections.updateID(session, player.getId());
+		System.out.println("After Update with new ID ...New Session from game connection"+GameConnections.getSession(player.getId()));
 		msg = array.toString();
-		for ( int i=0; i < Connections.SessionCount(); i++ ) 
-  	  {    Session s= Connections.getSession(i);
+		for ( int i=0; i < GameConnections.SessionCount(); i++ ) 
+  	  {    
+			long t = i;	
+			Session s= GameConnections.getSession(t);
   	       System.out.println(s);
   		   try {
 			s.getBasicRemote().sendText(msg, true);
@@ -85,6 +98,19 @@ public class Login {
 			e.printStackTrace();
 		}
   	  }
+		if(GameConnections.SessionCount()==2){
+			System.out.println("Start möglich");
+			Session leader =GameConnections.getSession((long)0);
+			JSONObject start= new JSONObject();
+			start.put("start",true);
+			try {
+				leader.getBasicRemote().sendText(start.toString());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
 //		Collection<Player> players = quiz.getPlayerList();
 //		JSONArray array = new JSONArray();
 //		for(Player p:players){

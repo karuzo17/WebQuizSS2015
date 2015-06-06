@@ -45,6 +45,8 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 //	alert("json:"+json);
 //	 alert(json[0].username);
 	 
+	 
+	
 	 var playerDiv = document.getElementById("players");
 //	 var frameDiv = document.getElementById("frame");
 //	 frameDiv.removeChild(scoreDiv);
@@ -55,7 +57,7 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 		 playerDiv.removeChild(playerDiv.lastChild);
 	 }
 	 
-	 for(var i=0;i<json.length;i++){
+	 for(var i=0;i<=json.length;i++){
 		 var div=document.createElement("div");
 			div.className="playerDiv";
 			div.id="player"+i;
@@ -68,7 +70,8 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 		 
 	 }
 	 
-	 if(json.length===2){
+	 
+	 if(json.length===3){
 		 
 		 
 		 createGameStartButton();
