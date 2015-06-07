@@ -21,6 +21,7 @@ import de.fhwgt.quiz.error.QuizError;
 @ServerEndpoint("/Login")
 public class Login {
 	Quiz quiz;
+	
 	JSONArray array=new JSONArray();
 	
 	
@@ -49,7 +50,9 @@ public class Login {
 			obj.put("id", p.getId());
 			array.put(obj);
 		}
-		String msg = array.toString();
+		JSONObject json = new JSONObject();
+		json.put("Playerlist", array);
+		String msg = json.toString();
 		System.out.println("New Session from game connection"+GameConnections.getSession((long)-1));
 		System.out.println("ConnectionCountSize"+GameConnections.SessionCount());
 		System.out.println("MSG:"+msg);
@@ -82,10 +85,11 @@ public class Login {
 		obj.put("score", player.getScore());	
 		obj.put("id", player.getId());
 		array.put(obj);
-		
+		JSONObject json = new JSONObject();
+		json.put("Playerlist", array);
 		GameConnections.updateID(session, player.getId());
 		System.out.println("After Update with new ID ...New Session from game connection"+GameConnections.getSession(player.getId()));
-		msg = array.toString();
+		msg = json.toString();
 		for ( int i=0; i < GameConnections.SessionCount(); i++ ) 
   	  {    
 			long t = i;	

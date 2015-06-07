@@ -45,6 +45,9 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 //	alert("json:"+json);
 //	 alert(json[0].username);
 	 
+	 if(json.Playerlist){
+		 alert("playerlist");
+		
 	 
 	
 	 var playerDiv = document.getElementById("players");
@@ -57,12 +60,12 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 		 playerDiv.removeChild(playerDiv.lastChild);
 	 }
 	 
-	 for(var i=0;i<=json.length;i++){
+	 for(var i=0;i<=json.Playerlist.length;i++){
 		 var div=document.createElement("div");
 			div.className="playerDiv";
 			div.id="player"+i;
 			
-			var divname = document.createTextNode(json[i].username);
+			var divname = document.createTextNode(json.Playerlist[i].username);
 			
 			div.appendChild(divname);
 			
@@ -70,12 +73,13 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 		 
 	 }
 	 
-	 
-	 if(json.length===3){
-		 
+	  }
+	 if(json.start){
+		 alert("spiel kann gestartet werden");
 		 
 		 createGameStartButton();
 	 }
+	
 //	 frameDiv.appendChild(score);
 // 	var text = message.data;
 // 	//alert("emfange Daten vom Server: "+text);
