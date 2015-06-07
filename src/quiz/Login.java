@@ -36,7 +36,7 @@ public class Login {
 	public void open(Session session, 
                  EndpointConfig conf) throws JSONException 
 	{
-		Connections.addSession(session);
+		GameConnections.addTMPSession(session);
 		GameConnections.addSession(session, -1);
 		System.out.println("neue hinzugefuegte Session:"+session);
 		
@@ -57,10 +57,10 @@ public class Login {
 		System.out.println("ConnectionCountSize"+GameConnections.SessionCount());
 		System.out.println("MSG:"+msg);
 
-			for ( int i=0; i < Connections.SessionCount(); i++ ) 
+			for ( int i=0; i < GameConnections.SessionTMPCount(); i++ ) 
 	  	  {    
 			
-			Session s= Connections.getSession(i);
+			Session s= GameConnections.getTMPSession(i);
 	  	    System.out.println(s);
 	  		   try {
 				s.getBasicRemote().sendText(msg, true);
