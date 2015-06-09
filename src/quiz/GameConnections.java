@@ -126,10 +126,7 @@ public class GameConnections {
     
     public static synchronized void updateID(Session session,long ID){
     	
-//    	if(tmplist.contains(session)){
-//    		socketliste.put(ID, session);
-//    		tmplist.remove(session);
-//    	}
+
     	if(socketliste.containsValue(session)){
     		System.out.println("Füge Spieler mit ID: "+ID +"und der Session: "+session +"hinzu");
     		socketliste.put(ID, session);
