@@ -55,8 +55,9 @@
 }
 
 #loginForm {      
-		margin-top: 200px;
-		margin-left: 200px;
+		
+		padding-top:200px;
+		padding-left: 250px;
 }
 
 #catalog { 
@@ -100,12 +101,12 @@
 
 #loginButton {
 		margin-top: 15px;
-		width: 205px;
+		width: 99px;
 }
 
-#gameStartButton {
+#Button {
 		margin-top: 15px;
-		width: 92px;
+		width: 99px;
 }
 
 #titleIMG {
