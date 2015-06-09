@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 
 	//var url = "ws://" + document.location.host  + "/Echo";
 	var url = 'ws://localhost:8080/WebQuizSS15/Login';
-	alert("url= "+url);
+//	alert("url= "+url);
 	
 	socket=new WebSocket(url);
 
@@ -26,8 +26,15 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
  {  
  	var button = event.target;
  	var outmessage=window.document.getElementById("userName").value; 
+ 	var newPlayer =JSON.stringify({"newPlayer":outmessage});
+ 	
+ 	var string =newPlayer;
+ 	var obj = JSON.parse(string);
+ 	
+// 	var string = JSON.stringify(obj);
+ 
  	if ( bereitZumSenden == true)
- 	    { alert("Jetzt senden");socket.send(outmessage);}
+ 	    { alert("Jetzt senden");socket.send(newPlayer);}
  	else alert("Server noch nicht bereit zum Empfangen. Bitte nochmals versuchen");
 	 
 	
@@ -35,7 +42,14 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
  
  function sendenMoeglich(){ bereitZumSenden=true; alert("Senden ist möglich");}
  function ErrorHandler(event){ alert("Fehler bei den Websockets "+event.data);}
- function Closing(event){ alert("Websockets closing "+event.code);}
+ function Closing(event){ 
+	 alert("Websockets closing "+event.code);
+	 
+	 
+	 var string = JSON.stringify({"Abmelden":true});
+	 socket.send(string);
+ 
+ }
  
  function empfange(message)
  { 
@@ -46,9 +60,14 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 //	 alert(json[0].username);
 	 
 	 if(json.Playerlist){
-		 alert("playerlist");
+//		 alert("playerlist"+json.Playerlist);
+//		 var i=0;
+//		 
+//		 for(i;i<json.Playerlist.length;i++){
+//			 alert("Name:"+json.Playerlist[i].username)
+//		 }
 		
-	 
+		 
 	
 	 var playerDiv = document.getElementById("players");
 //	 var frameDiv = document.getElementById("frame");
