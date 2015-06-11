@@ -91,7 +91,9 @@ public class Login {
 	     System.out.println("new array "+GameConnections.getInstance());
 	     
 	     ScoreAgent agent= ScoreAgent.getInstance();
-			if(!agent.isAlive()){
+//			agent.start();
+	     if(!agent.isAlive()){
+	    	 System.out.println("agent alive ? "+agent.isAlive());
 				agent.start();
 			}else{
 				
@@ -148,6 +150,7 @@ public class Login {
 		ScoreAgent agent= ScoreAgent.getInstance();
 		if(!agent.isAlive()){
 			agent.start();
+			System.out.println("Agent started");
 		}else{
 			
 			synchronized (agent) {

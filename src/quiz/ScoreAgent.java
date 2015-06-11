@@ -21,11 +21,21 @@ public class ScoreAgent extends Thread{
 	public void run(){
 		System.out.println("Thread gestartet ");
 	
+
 			while(true){
-				
-				synchronized (this) {
-					
-				while(running){
+			
+				System.out.println("ICH laufe ");
+			synchronized (this) {  //Instanz von 
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+//				
+
+//					
+//				while(running){
 					System.out.println("----ScoreAgent--------ScoreAgent--------");
 			 JSONObject json = new JSONObject();
 		     try {
@@ -84,9 +94,11 @@ public class ScoreAgent extends Thread{
 		running = false;
 			
 				System.out.println("Thread fertig");
+				
 				}
 			}
-			}
+//			}
+			
 		
 	}
 	
