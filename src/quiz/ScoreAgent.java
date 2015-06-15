@@ -39,7 +39,7 @@ public class ScoreAgent extends Thread{
 					System.out.println("----ScoreAgent--------ScoreAgent--------");
 			 JSONObject json = new JSONObject();
 		     try {
-				json.put("Playerlist", GameConnections.getInstance());
+				json.put("PLAYERLIST", GameConnections.getInstance());
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -77,7 +77,7 @@ public class ScoreAgent extends Thread{
 				Session leader =GameConnections.getSession((long)0);
 				JSONObject start= new JSONObject();
 				try {
-					start.put("start",true);
+					start.put("GAMESTART",true);
 				} catch (JSONException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

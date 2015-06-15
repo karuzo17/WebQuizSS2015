@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
  {  
  	var button = event.target;
  	var outmessage=window.document.getElementById("userName").value; 
- 	var newPlayer =JSON.stringify({"newPlayer":outmessage});
+ 	var newPlayer =JSON.stringify({"NEWPLAYER":outmessage});
  	
  	var string =newPlayer;
  	var obj = JSON.parse(string);
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 	 alert("Websockets closing "+event.code);
 	 
 	 
-	 var string = JSON.stringify({"Abmelden":true});
+	 var string = JSON.stringify({"LOGOUT":true});
 	 socket.send(string);
  
  }
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 //	alert("json:"+json);
 //	 alert(json[0].username);
 	 
-	 if(json.Playerlist){
+	 if(json.PLAYERLIST){
 //		 alert("playerlist"+json.Playerlist);
 //		 var i=0;
 //		 
@@ -79,12 +79,12 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 		 playerDiv.removeChild(playerDiv.lastChild);
 	 }
 	 
-	 for(var i=0;i<=json.Playerlist.length;i++){
+	 for(var i=0;i<=json.PLAYERLIST.length;i++){
 		 var div=document.createElement("div");
 			div.className="playerDiv";
 			div.id="player"+i;
 			
-			var divname = document.createTextNode(json.Playerlist[i].username);
+			var divname = document.createTextNode(json.PLAYERLIST[i].username);
 			
 			div.appendChild(divname);
 			
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 	 }
 	 
 	  }
-	 if(json.start){
+	 if(json.GAMESTART){
 		 alert("spiel kann gestartet werden");
 		 
 		 createGameStartButton();
