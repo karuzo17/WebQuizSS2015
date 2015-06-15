@@ -3,6 +3,7 @@ package de.fhwgt.quiz.loader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,6 +18,14 @@ import java.util.Scanner;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+
+
+
+
+//import org.jdom2.Document;
+import org.jdom2.*;
+import org.jdom2.input.SAXBuilder;
 
 import de.fhwgt.quiz.application.Catalog;
 import de.fhwgt.quiz.application.Question;
@@ -107,8 +116,16 @@ public class FilesystemLoader implements CatalogLoader {
             this.catalogDir = dir.listFiles(new CatalogFilter());
             System.out.println("Catalog dir " + catalogDir);
             for (File f : catalogDir) {
-                catalogs.put(f.getName(),
-                    new Catalog(f.getName(), new QuestionFileLoader(f)));
+                try {
+					catalogs.put(f.getName(),
+					    new Catalog(f.getName(), new QuestionFileLoader(f)));
+				} catch (JDOMException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         }
 
@@ -147,57 +164,54 @@ public class FilesystemLoader implements CatalogLoader {
 
     private class QuestionFileLoader implements QuestionLoader {
 
-        private final File catalogFile;
+//        private final File catalogFile;
+        private String filename;
         private final List <Question> questions = new ArrayList<Question>();
-
-        public QuestionFileLoader(File file) {
-            catalogFile = file;
+        private org.jdom2.Document doc ;
+        private Element Fragenkatalog;
+        private Element Frage;
+        private Question question;
+        
+        public QuestionFileLoader(File file) throws JDOMException, IOException {
+//            catalogFile = file;
+            filename= file.getAbsolutePath();
+        
+			doc = new SAXBuilder().build(filename);
+			System.out.println("QuestionLoader läuft");
+			
         }
         @Override
         public List<Question> getQuestions(Catalog catalog)
             throws LoaderException {
-
+        	System.out.println("----------GETQUESTIONS------");
             if (!questions.isEmpty()) {
                 return questions;
             }
-
-            Scanner scanner;
-            try {
-                scanner = new Scanner(catalogFile, "UTF-8");
-            } catch (FileNotFoundException e) {
-                throw new LoaderException();
+            System.out.println("Katalog-Name"+catalog.getName());
+//            System.out.println("ROOT-ELEMENT:"+doc.getRootElement());
+            Fragenkatalog = doc.getRootElement();
+            List <Element> Fragen = Fragenkatalog.getChildren();
+            System.out.println("SizeOfCatalog"+Fragen.size());
+            for(int i=0;i<Fragen.size();i++){
+            	
+            	Frage=Fragen.get(i);
+            	question = new Question(Frage.getChildText("Fragetext"));
+            	System.out.println("Fragetext"+Frage.getChildText("Fragetext"));
+            	question.setTimeout(Integer.parseInt(Frage.getAttributeValue("timeout")));
+            	List<Element> answers = Frage.getChildren("Antwort");
+            	System.out.println("Antworten:"+answers.get(0).getText()+" "+answers.get(1).getText()+" "+answers.get(2).getText()+" "+answers.get(3).getText());
+            
+            	question.addAnswer(answers.get(0).getText());
+            	question.addBogusAnswer(answers.get(1).getText());
+            	question.addBogusAnswer(answers.get(2).getText());
+            	question.addBogusAnswer(answers.get(3).getText());
+            	
+            	if(question.isComplete()){
+            		question.shuffleAnswers();
+            		questions.add(question);
+            	}
             }
 
-            // Search the whole file for questions
-            for (String questionBlock = scanner.findWithinHorizon(blockPattern, 0);
-                 questionBlock != null;
-                 questionBlock = scanner.findWithinHorizon(blockPattern, 0)) {
-
-                MatchResult m = scanner.match();
-                Question question = new Question(m.group(1));
-
-                // The 2nd group is optional
-                if (m.group(2) != null) {
-                    question.setTimeout(
-                        new Integer(m.group(2)));
-                }
-
-                // Match the answers
-                Matcher am = questionPattern.matcher(m.group(3));
-                while (am.find()) {
-                    if (am.group(1).equals("+")) {
-                        question.addAnswer(am.group(2));
-                    } else {
-                        question.addBogusAnswer(am.group(2));
-                    }
-                }
-
-                // Make sure the question is complete
-                if (question.isComplete())
-                    // Add some randomization
-                    question.shuffleAnswers();
-                    questions.add(question);
-            }
             return questions;
         }
 

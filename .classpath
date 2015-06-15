@@ -15,5 +15,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="/Users/TIm/Downloads/apache-tomcat-8.0.22/lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="/Users/TIm/Downloads/org.json-20120521.jar"/>
+	<classpathentry kind="lib" path="/Users/TIm/Downloads/jdom-2.0.6/jdom-2.0.6.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
