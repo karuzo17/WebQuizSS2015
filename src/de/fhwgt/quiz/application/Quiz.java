@@ -186,11 +186,13 @@ public class Quiz {
         // Try to get next question
         Question question = player.getNextQuestion(error);
         if (error.isSet()) {
+        	System.out.println("Error is Set");
             return null;
         }
 
         // No next question available
         if (question == null) {
+        	System.out.println("Keine neue frage ");
             return null;
         }
 

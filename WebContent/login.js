@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 	
  } 
  
- function sendenMoeglich(){ bereitZumSenden=true; alert("Senden ist möglich");}
+ function sendenMoeglich(){ bereitZumSenden=true; console.log("Senden ist möglich");}
  function ErrorHandler(event){ alert("Fehler bei den Websockets "+event.data);}
  function Closing(event){ 
 	 alert("Websockets closing "+event.code);
@@ -59,6 +59,13 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 //	alert("json:"+json);
 //	 alert(json[0].username);
 	 
+	 if(json.QUESTION){
+		 alert("Question erhalten");
+	 }
+	 if(json.CATALOG){
+//		 alert(json.CATALOG);
+		 console.log("Hab katalog bekommen");
+	 }
 	 if(json.PLAYERLIST){
 //		 alert("playerlist"+json.Playerlist);
 //		 var i=0;
@@ -94,7 +101,7 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
 	 
 	  }
 	 if(json.GAMESTART){
-		 alert("spiel kann gestartet werden");
+		 console.log("spiel kann gestartet werden");
 		 
 		 createGameStartButton();
 	 }
@@ -136,5 +143,12 @@ document.addEventListener('DOMContentLoaded', initLogin, false);
  }
  
  function startGame(){
-	 alert("ALARM START ");
+	 console.log("ALARM START ");
+	 var start =JSON.stringify({"GAMESTART":true});
+	 socket.send(start);
+ }
+ function catalogSelected(name){
+	 console.log("Name"+name);
+	 var cat =JSON.stringify({"CATALOG":name});
+	 socket.send(cat);
  }

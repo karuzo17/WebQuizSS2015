@@ -52,9 +52,12 @@ function handler(){
 }
 //dickes Problem 
 function catalogClicked(event){
+	console.log(event.target.innerHTML);
+	catalogSelected(event.target.innerHTML);
 	var catalogClicked = event.target;
+	
     var catalogsTMP = document.getElementsByClassName("catalogDiv");
-    
+   
     for(var j = 0; j < catalogsTMP.length; j++){
     	
         if(catalogClicked === catalogsTMP[j]){

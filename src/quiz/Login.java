@@ -3,7 +3,9 @@ package quiz;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.TimerTask;
 import java.util.logging.ErrorManager;
 
 import javax.websocket.EndpointConfig;
@@ -19,14 +21,24 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
+
+import de.fhwgt.quiz.application.Game;
 import de.fhwgt.quiz.application.Player;
+import de.fhwgt.quiz.application.Question;
 import de.fhwgt.quiz.application.Quiz;
 import de.fhwgt.quiz.error.QuizError;
+import de.fhwgt.quiz.loader.LoaderException;
 
 @ServerEndpoint("/Login")
 public class Login {
 	Quiz quiz;
+	Game game;
 	ScoreAgent agent;
+	GameHandler handler;
+	String tmpCatalog;
+	Question quest;
+	Player leader=null;
 	
 	public Login(){
 	
@@ -145,6 +157,91 @@ public class Login {
 		
 			
 		JSONObject blub = new JSONObject(msg);
+		
+		if(blub.keys().next().equals("CATALOG")){
+			System.out.println("Neuer Katalog erhalten:"+blub.getString("CATALOG"));
+			
+			handler = GameHandler.getInstance();
+			
+				
+				if(!handler.isAlive()){		
+					System.out.println("Handler lebt nicht ");
+					handler.setName(blub.getString("CATALOG"));
+					handler.start();
+
+				}
+				
+				Collection<Player> players= quiz.getPlayerList();
+			
+				for(Player p: players){
+					if(p.isSuperuser()){
+						leader =p;
+					}
+				}
+				QuizError error = new QuizError();
+				synchronized (handler) {
+				if(handler.isAlive()){
+					System.out.println("Handler lebt noch");
+					handler.catalogName=blub.getString("CATALOG");
+					tmpCatalog=blub.getString("CATALOG");
+					quiz.changeCatalog(leader, tmpCatalog, error); //
+//					handler.setName(blub.getString("CATALOG"));
+					handler.notify();
+					
+				}
+				
+			}
+			
+		}
+		if(blub.keys().next().equals("GAMESTART")){
+			System.out.println("SPIEL SOLL GESTARTET WERDEN------!!!!!------");
+			Collection<Player> players = quiz.getPlayerList();
+		     QuizError error = new QuizError();
+		  System.out.println("vor schleufe");
+		  game = new Game();
+				for(Player p:players){
+					System.out.println("in schleufe");
+					if(p.isSuperuser()){
+						
+						quiz.startGame(p, error);
+//						System.out.println("ErrorDescription"+error.getDescription());
+					}
+					game.addPlayer(p, error);
+				}
+				System.out.println("NACH schleife");
+				TimerTask task = new TimerTask() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						
+					}
+				};
+				quest =quiz.requestQuestion(leader, task, error);
+				System.out.println("Nach request");
+				Session leader =GameConnections.getSession((long)0);
+				String frage=quest.getQuestion();
+				List<String> antworten = quest.getAnswerList();
+				Long timeout=quest.getTimeout();
+				JSONArray arj = new JSONArray();
+				arj.put(frage);
+				for(String s:antworten){
+					arj.put(s);
+				}
+				arj.put(timeout);
+				
+				JSONObject question = new JSONObject();
+				question.put("QUESTION", arj);
+				try {
+					leader.getBasicRemote().sendText(question.toString());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			System.out.println("Players in start:"+game.getPlayers());
+			System.out.println("Catalog in Game:"+game.getCatalog());
+			
+		}
 		if(blub.keys().next().equals("LOGOUT")){
 			System.out.println("Spieler mit Session"+session+"hat sich abgemeldet");
 		}
@@ -178,6 +275,15 @@ public class Login {
 			synchronized (agent) {
 				agent.restart();
 			}
+		}
+		handler = GameHandler.getInstance();
+		
+		
+		if(!handler.isAlive()){		
+			System.out.println("Handler lebt nicht ");
+//			handler.setName(blub.getString("CATALOG"));
+			handler.start();
+
 		}
 
 		}

@@ -32,11 +32,7 @@ public class ScoreAgent extends Thread{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-//				
-
-//					
-//				while(running){
-					System.out.println("----ScoreAgent--------ScoreAgent--------");
+			System.out.println("----ScoreAgent--------ScoreAgent--------");
 			 JSONObject json = new JSONObject();
 		     try {
 				json.put("PLAYERLIST", GameConnections.getInstance());
@@ -45,9 +41,6 @@ public class ScoreAgent extends Thread{
 				e1.printStackTrace();
 			}
 		     String msg = json.toString();
-//		     System.out.println("SessionCount"+GameConnections.SessionCount());
-		     System.out.println("GAMEConnections"+GameConnections.outputAllSessions());
-		     System.out.println("TMP-Connections"+GameConnections.outputAllTMPSessions());
 		  
 		     Map<Long, Session> map = GameConnections.getMap();
 		     

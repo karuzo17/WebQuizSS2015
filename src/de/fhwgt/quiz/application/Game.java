@@ -77,14 +77,17 @@ public class Game {
 
         if (this.players.size() >= USER_MIN) {
             try {
+            	System.out.println("ASSIGN-QUETIONS");
                 assignQuestions();
             } catch (LoaderException e) {
                 error.set(QuizErrorType.CATALOG_LOAD_FAILED);
+                System.out.println("Error in Assing"+error.getDescription());
                 return false;
             }
             this.active = true;
             return true;
         } else {
+        	System.out.println("Not enough Players");
             error.set(QuizErrorType.NOT_ENOUGH_PLAYERS);
             return false;
         }

@@ -50,27 +50,27 @@ public class CatalogServlet extends HttpServlet {
         quiz = Quiz.getInstance();
         quiz.initCatalogLoader(loader);
 
-        try {
-			Catalog cat = (Catalog)quiz.getCatalogByName("XMLsimple.xml");
-			
-			questions= cat.getQuestions();
-			for (int i =0; i<questions.size();i++){
-//				System.out.println("Fragetext: "+ questions.get(i).getQuestion().toString());
-//				System.out.println("Timeout: " + questions.get(i).getTimeout());
-				List<String> answers;
-				for(int j =0; j<4;j++){
-					answers = questions.get(j).getAnswerList();
-				
-				}
-			}
-			
-		} catch (LoaderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        // TODO Auto-generated constructor stub
-    }
+//        try {
+//			Catalog cat = (Catalog)quiz.getCatalogByName("XMLsimple.xml");
+//			
+//			questions= cat.getQuestions();
+//			for (int i =0; i<questions.size();i++){
+////				System.out.println("Fragetext: "+ questions.get(i).getQuestion().toString());
+////				System.out.println("Timeout: " + questions.get(i).getTimeout());
+//				List<String> answers;
+//				for(int j =0; j<4;j++){
+//					answers = questions.get(j).getAnswerList();
+//				
+//				}
+//			}
+//			
+//		} catch (LoaderException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//        
+//        // TODO Auto-generated constructor stub
+   }
 
     public void init(ServletConfig config) throws ServletException {   
     	super.init(config);
