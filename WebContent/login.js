@@ -12,6 +12,7 @@ var waitingForNewQuestion = false;
 function initLogin() { // Listener registrieren fÃ¼r Buttons
 	var login = window.document.getElementById("loginButton");
 	login.addEventListener("click", send, false);
+	initPlayerTable();
 
 	var url = 'ws://localhost:8080/WebQuizSS15/Login';
 
@@ -28,12 +29,11 @@ function send(event) {
 	var button = event.target;
 	var outmessage = window.document.getElementById("userName").value;
 	var nameUsed = false;
+	var playerCols = document.getElementsByClassName("playerCol");
 
-	var playerDivs = document.getElementsByClassName("playerDiv");
+	for (var i = 0; i < playerCols.length; i++) {
 
-	for (var i = 0; i < playerDivs.length; i++) {
-
-		if (document.getElementById("player" + i).innerHTML === outmessage) {
+		if (document.getElementById("playerCol" + i).innerHTML === outmessage) {
 			alert("Name schon vergeben");
 			nameUsed = true;
 		}
@@ -89,19 +89,12 @@ function empfange(message) {
 
 	if (json.PLAYERLIST) {
 
-		var playerDiv = document.getElementById("players");
-
-		while (playerDiv.hasChildNodes()) {
-			playerDiv.removeChild(playerDiv.lastChild);
-		}
+		var playerTable = document.getElementById("playerTable");
 
 		for (var i = 0; i <= json.PLAYERLIST.length; i++) {
-			var div = document.createElement("div");
-			div.className = "playerDiv";
-			div.id = "player" + i;
-			var divname = document.createTextNode(json.PLAYERLIST[i].username);
-			div.appendChild(divname);
-			playerDiv.appendChild(div);
+
+			document.getElementById("playerCol" + i).innerHTML = json.PLAYERLIST[i].username;
+			document.getElementById("scoreCol" + i).innerHTML = json.PLAYERLIST[i].score;
 		}
 	}
 
@@ -123,6 +116,11 @@ function empfange(message) {
 		var question = json.QUESTION;
 		createQuestion(question);
 		waitingForNewQuestion = false;
+	}
+
+	if (json.ERROR) {
+
+		alert("Got error:");
 	}
 }
 
@@ -165,6 +163,7 @@ function catalogSelected(name) {
 }
 
 function gameOn() {
+
 	var questionSection = document.createElement("section");
 	questionSection.id = "newMain";
 	var frameDiv = document.getElementById("frame");
@@ -177,7 +176,7 @@ function createQuestion(questionFromServer) {
 	for (var aC = 0; aC < 4; aC++) {
 		document.getElementById("answer" + aC).innerHTML = questionFromServer[aC + 1];
 	}
-	// Noch Feld/Platz finden/designen
+
 	timer = questionFromServer[5] / 1000;
 	question = questionFromServer[0];
 	document.getElementById("questionText").innerHTML = questionFromServer[0]
@@ -239,13 +238,16 @@ function initTimer() {
 
 function countTime() {
 
+	var questionText = document.getElementById("questionText");
+
 	timer = timer - 1;
 	if (timer == 0) {
-		document.getElementById("questionText").innerHTML
-				+ "<br /><br /><br />" + "Seconds left:   0";
+		questionText.innerHTML = question + "<br /><br /><br />"
+				+ "Seconds left:   0";
 		window.clearInterval(animation);
 	} else {
-		questionText.innerHTML = question + "<br /><br /><br />" + "Seconds left:  " + timer;
+		questionText.innerHTML = question + "<br /><br /><br />"
+				+ "Seconds left:  " + timer;
 	}
 }
 
@@ -259,7 +261,38 @@ function answerClicked(event) {
 				alert("Clicked answer: " + i);
 				answerForServer = i;
 				waitingForNewQuestion = true;
+				window.clearInterval(animation);
 			}
 		}
 	}
+}
+
+function initPlayerTable() {
+
+	var playersDiv = document.getElementById("players");
+	var playerTable = document.createElement("table");
+	playerTable.id = "playerTable";
+
+	for (var i = 0; i < 6; i++) {
+
+		var tableRow = playerTable.insertRow();
+		for (var j = 0; j < 3; j++) {
+
+			var tableCell = tableRow.insertCell();
+			if (j === 0) {
+				tableCell.innerHTML = i + 1 + ".";
+				tableCell.setAttribute("width", "20%");
+			} else if (j === 1) {
+				tableCell.id = "playerCol" + i;
+				tableCell.innerHTML = "-";
+				tableCell.className = "playerCol";
+				tableCell.setAttribute("width", "55%");
+			} else {
+				tableCell.id = "scoreCol" + i;
+				tableCell.innerHTML = "-";
+				tableCell.setAttribute("width", "25%");
+			}
+		}
+	}
+	playersDiv.appendChild(playerTable);
 }

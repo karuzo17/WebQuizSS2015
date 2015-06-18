@@ -127,12 +127,18 @@
         border: 1px solid;
         border-color: #7C907A;
         border-radius: 5px;
+        width: 50%;
 }
 
 #questionText {
         border: 1px solid;
         border-color: #7C907A;
         border-radius: 5px;
+}
+
+#playerTable{
+        height: 115%;
+        width: 340px;
 }
 
 #showQuestionTable {
