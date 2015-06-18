@@ -83,6 +83,24 @@ public class ScoreAgent extends Thread{
 				}
 				
 			}
+		 	//Wenn der erste Spieler sich anmeldet, bekommt er das LEADER-JSON
+		 	if(GameConnections.SessionCount()==1){
+				System.out.println("!!!	Leader angemeldet	!!!");
+				Session leader =GameConnections.getSession((long)0);
+				JSONObject start= new JSONObject();
+				try {
+					start.put("LEADER",true);
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
+					leader.getBasicRemote().sendText(start.toString());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+			}
 		     System.out.println("ENDE----------Ende------ScoreAgent--------ScoreAgent-------ENDE-");
 		running = false;
 			
