@@ -134,7 +134,6 @@ function createGameStartButton() {
 	var loginDiv = document.getElementById("loginForm");
 	loginDiv.appendChild(Button);
 	Button.addEventListener("click", startGame, false);
-
 }
 
 function startGame() {
