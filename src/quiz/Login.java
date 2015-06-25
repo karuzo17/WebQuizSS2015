@@ -268,6 +268,16 @@ public class Login {
 
 		GameConnections.addSession(session, player.getId());
 		
+		if(player.getId()==0){
+			JSONObject j = new JSONObject();
+			j.put("LEADER", true);
+			try {
+				session.getBasicRemote().sendText(j.toString());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		ScoreAgent agent= ScoreAgent.getInstance();
 		if(!agent.isAlive()){

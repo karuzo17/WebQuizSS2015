@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', init, false);
 function init() {
 
 	request = new XMLHttpRequest();
-	request.open("GET", "/WebQuizSS2015/catalogs", true);
+	request.open("GET", "/WebQuizSS15/catalogs", true);
 	request.onreadystatechange = handler;
 	request.send();
 }
@@ -37,6 +37,7 @@ function handler() {
 			div.appendChild(divname);
 			catDiv.appendChild(div);
 		}
+//		initCatListener();
 
 		break;
 
@@ -48,7 +49,8 @@ function handler() {
 }
 
 function initCatListener() {
-
+	
+	console.log("Init Cat Listener");
 	var catDiv = document.getElementById("catalog");
 	var divs = catDiv.getElementsByClassName("catalogDiv");
 

@@ -183,8 +183,10 @@ public class FilesystemLoader implements CatalogLoader {
         @Override
         public List<Question> getQuestions(Catalog catalog)
             throws LoaderException {
-        	System.out.println("----------GETQUESTIONS------");
+        	System.out.println("----------GETQUESTIONS------"+catalog.getName());
+        	
             if (!questions.isEmpty()) {
+            	System.out.println("antworten schon befüllt");
                 return questions;
             }
             System.out.println("Katalog-Name"+catalog.getName());
@@ -207,8 +209,10 @@ public class FilesystemLoader implements CatalogLoader {
             	question.addBogusAnswer(answers.get(3).getText());
             	
             	if(question.isComplete()){
+            		System.out.println("Qestions ist Complete");
             		question.shuffleAnswers();
             		questions.add(question);
+            		System.out.println("After ADD");
             	}
             }
 
