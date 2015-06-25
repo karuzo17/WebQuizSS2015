@@ -8,6 +8,7 @@ var animation;
 var timer;
 var question;
 var waitingForNewQuestion = false;
+var player;
 
 //Dieser Text ist nur zum Pushen da
 //Dieser Text ist nur zum Pushen da
@@ -86,6 +87,7 @@ function send(event) {
 
 		if (bereitZumSenden == true) {
 			socket.send(newPlayer);
+			player = outmessage;
 			removeLoginButton();
 		} else
 			alert("Server noch nicht bereit zum Empfangen. Bitte nochmals versuchen");
@@ -125,10 +127,11 @@ function empfange(message) {
 	}
 
 	if (json.PLAYERLIST) {
+		
+		alert("Ich heiße: " + player + " !");
 
 		var playerTable = document.getElementById("playerTable");
 
-		//alert("json.PLAYERLIST.length:    " + json.PLAYERLIST.length);
 		for (var i = 0; i < 6; i++) {
 
 			if(i < json.PLAYERLIST.length){
