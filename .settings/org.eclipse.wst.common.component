@@ -2,7 +2,16 @@
     <wb-module deploy-name="WebQuizSS15">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <dependent-module archiveName="org.json-20120521.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//Users/TIm/Downloads/org.json-20120521.jar">
+        <dependent-module archiveName="websocket-api.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/derLu/Downloads/apache-tomcat-8.0.23-windows-x64/apache-tomcat-8.0.23/lib/websocket-api.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="servlet-api.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/derLu/Downloads/apache-tomcat-8.0.23-windows-x64/apache-tomcat-8.0.23/lib/servlet-api.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jdom-2.0.6.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/derLu/Downloads/jdom-2.0.6/jdom-2.0.6.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="java-json.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/derLu/Downloads/java-json.jar/java-json.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="/WebQuizSS15/build/classes"/>
