@@ -239,6 +239,7 @@ function tableCreate() {
 			if (i !== 0) {
 				tc.id = "answer" + aC;
 				tc.className = "cols";
+				tc.setAttribute("width", "55%");
 				aC++;
 			} else {
 				if (j === 0) {
