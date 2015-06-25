@@ -128,10 +128,16 @@ function empfange(message) {
 
 		var playerTable = document.getElementById("playerTable");
 
-		for (var i = 0; i <= json.PLAYERLIST.length; i++) {
+		//alert("json.PLAYERLIST.length:    " + json.PLAYERLIST.length);
+		for (var i = 0; i < 6; i++) {
 
-			document.getElementById("playerCol" + i).innerHTML = json.PLAYERLIST[i].username;
-			document.getElementById("scoreCol" + i).innerHTML = json.PLAYERLIST[i].score;
+			if(i < json.PLAYERLIST.length){
+				document.getElementById("playerCol" + i).innerHTML = json.PLAYERLIST[i].username;
+				document.getElementById("scoreCol" + i).innerHTML = json.PLAYERLIST[i].score;
+			}else{
+				document.getElementById("playerCol" + i).innerHTML = "-";
+				document.getElementById("scoreCol" + i).innerHTML = 0;
+			}
 		}
 	}
 
