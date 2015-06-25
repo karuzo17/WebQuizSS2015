@@ -17,8 +17,11 @@ var waitingForNewQuestion = false;
 //Dieser Text ist nur zum Pushen da
 
 function initLogin() { // Listener registrieren fÃ¼r Buttons
-	var login = window.document.getElementById("loginButton");
-	login.addEventListener("click", send, false);
+	
+	startNewGame();
+	
+	//var login = window.document.getElementById("loginButton");
+	//login.addEventListener("click", send, false);
 	initPlayerTable();
 
 	var url = 'ws://localhost:8080/WebQuizSS15/Login';
@@ -29,6 +32,33 @@ function initLogin() { // Listener registrieren fÃ¼r Buttons
 	socket.onclose = Closing;
 	socket.onerror = ErrorHandler;
 	socket.onmessage = empfange;
+}
+
+function startNewGame(){
+	
+	var main = document.getElementById("main");
+	
+	var loginForm = document.createElement("div");
+	loginForm.id = "loginForm";
+	
+	main.appendChild(loginForm);
+	
+	
+	var loginButton = document.createElement("input");
+	loginButton.type = "button";
+	loginButton.value = "Login";
+	loginButton.id = "loginButton";
+	loginButton.addEventListener("click", send, false);
+	
+	var userName = document.createElement("input");
+	userName.type = "text";
+	userName.name = "userName";
+	userName.id = "userName";
+	
+	
+	loginForm.appendChild(loginButton);
+	loginForm.appendChild(userName);
+	
 }
 
 // Listener fÃ¼r den Button go
@@ -155,7 +185,7 @@ function startGame() {
 		alert("first pick cat!");
 	}
 	if (tmpCat) {
-		gameOn();
+		cleanMain();
 		tableCreate();
 	}
 }
@@ -169,13 +199,12 @@ function catalogSelected(name) {
 	socket.send(cat);
 }
 
-function gameOn() {
-
-	var questionSection = document.createElement("section");
-	questionSection.id = "newMain";
-	var frameDiv = document.getElementById("frame");
+function cleanMain() {
 	var mainSection = document.getElementById("main");
-	frameDiv.replaceChild(questionSection, mainSection);
+
+	while (mainSection.hasChildNodes()) {
+		mainSection.removeChild(mainSection.lastChild);
+	}
 }
 
 function createQuestion(questionFromServer) {
@@ -192,7 +221,7 @@ function createQuestion(questionFromServer) {
 }
 
 function tableCreate() {
-	var questionSection = document.getElementById("newMain");
+	var questionSection = document.getElementById("main");
 	tbl = document.createElement('table');
 	tbl.id = "showQuestionTable";
 
