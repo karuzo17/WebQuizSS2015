@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', init, false);
 function init() {
 
 	request = new XMLHttpRequest();
-	request.open("GET", "/WebQuizSS15/catalogs", true);
+	request.open("GET", "/WebQuizSS2015/catalogs", true);
 	request.onreadystatechange = handler;
 	request.send();
 }

@@ -9,6 +9,13 @@ var timer;
 var question;
 var waitingForNewQuestion = false;
 
+//Dieser Text ist nur zum Pushen da
+//Dieser Text ist nur zum Pushen da
+//Dieser Text ist nur zum Pushen da
+//Dieser Text ist nur zum Pushen da
+//Dieser Text ist nur zum Pushen da
+//Dieser Text ist nur zum Pushen da
+
 function initLogin() { // Listener registrieren fÃ¼r Buttons
 	var login = window.document.getElementById("loginButton");
 	login.addEventListener("click", send, false);
