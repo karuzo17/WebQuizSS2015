@@ -114,7 +114,6 @@ function empfange(message) {
 	var text = message.data;
 	var json = JSON.parse(text);
 
-	console.log(json);
 	if (json.CATALOG) {
 
 		console.log("Hab katalog bekommen");
@@ -126,19 +125,19 @@ function empfange(message) {
 	}
 
 	if (json.PLAYERLIST) {
-//		for (var i = 0; i <= json.PLAYERLIST.length; i++) {
-//			console.log(json.PLAYERLIST[i].username);
-//		
-//		}
-		
+
 		var playerTable = document.getElementById("playerTable");
 
-		for (var i = 0; i <= json.PLAYERLIST.length; i++) {
-			var name = json.PLAYERLIST[i].username;
-			document.getElementById("playerCol" + i).innerHTML = name;
-//			console.log(name);
-//			alert(name);
-			document.getElementById("scoreCol" + i).innerHTML = json.PLAYERLIST[i].score;
+		//alert("json.PLAYERLIST.length:    " + json.PLAYERLIST.length);
+		for (var i = 0; i < 6; i++) {
+
+			if(i < json.PLAYERLIST.length){
+				document.getElementById("playerCol" + i).innerHTML = json.PLAYERLIST[i].username;
+				document.getElementById("scoreCol" + i).innerHTML = json.PLAYERLIST[i].score;
+			}else{
+				document.getElementById("playerCol" + i).innerHTML = "-";
+				document.getElementById("scoreCol" + i).innerHTML = 0;
+			}
 		}
 	}
 
@@ -156,17 +155,10 @@ function empfange(message) {
 	}
 
 	if (json.QUESTION) {
-		alert("quest erhalten");
-		console.log("quest erhalten");
+
 		var question = json.QUESTION;
 		createQuestion(question);
 		waitingForNewQuestion = false;
-	}
-	
-	if(json.RESPONSE){
-		
-		console.log(json.RESPONSE);
-//		alert("korrekte Antwort wäre: "+ json.RESPONSE +" gewesen");
 	}
 
 	if (json.ERROR) {
@@ -312,11 +304,6 @@ function answerClicked(event) {
 				answerForServer = i;
 				waitingForNewQuestion = true;
 				window.clearInterval(animation);
-				var response = JSON.stringify({
-					"RESPONSE" : answerForServer
-				});
-			
-				socket.send(response);
 			}
 		}
 	}
