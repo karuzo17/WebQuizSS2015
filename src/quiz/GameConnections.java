@@ -36,6 +36,17 @@ public class GameConnections {
 		array.put(obj);
 //		System.out.println("gameJSON danach"+array);
 	}
+	public static synchronized void updateJSONScore(long id,long score) throws JSONException{
+		for(int i=0;i<array.length();i++){
+			JSONObject json =array.getJSONObject(i);
+			if(json.getLong("id")==id){
+				json.put("score",score);
+				
+				
+			}
+			
+		}
+	}
 	public static synchronized JSONArray getInstance(){
 		return array;
 	}
@@ -69,19 +80,7 @@ public class GameConnections {
     public  static synchronized long getID(Session session) { 
     	long id=0;
     	java.util.Iterator<Entry<Long, Session>> iter = socketliste.entrySet().iterator();
-//    	for(Entry<Long, Session> entry:socketliste.entrySet()){
-//    		System.out.println("Drin");
-//    		if(entry.getValue().equals(session)){
-//    			id = entry.getKey();
-//    		}
-//    	}
-//    	for(Long key:socketliste.keySet()){
-//    		Session s=socketliste.get(key);
-//    		System.out.println(s);
-//    		if(s==session){
-//    			System.out.println("identische sessions");
-//    		}
-//    	}
+
     	while(iter.hasNext()){
     		Map.Entry<Long, Session> entry = iter.next();
     		if(entry.getValue().equals(session)){

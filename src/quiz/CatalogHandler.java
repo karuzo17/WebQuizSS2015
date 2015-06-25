@@ -60,6 +60,10 @@ public class CatalogHandler extends Thread{
 		System.out.println("Name set to"+catalogName);
 		catalogName=name;
 	}
+	public String getCatalogName(){ 
+		return catalogName;
+		
+	}
 	
 	public static CatalogHandler getInstance(){
 		

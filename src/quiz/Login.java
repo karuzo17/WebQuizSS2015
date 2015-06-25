@@ -38,7 +38,8 @@ public class Login {
 	Game game;
 	ScoreAgent agent;
 	CatalogHandler handler;
-	String tmpCatalog;
+	QuestHandler quester;
+	public String tmpCatalog="none";
 	Question quest;
 	Player leader=null;
 	
@@ -107,7 +108,7 @@ public class Login {
 	     ScoreAgent agent= ScoreAgent.getInstance();
 //			agent.start();
 	     if(!agent.isAlive()){
-	    	 System.out.println("agent alive ? "+agent.isAlive());
+	    	 	System.out.println("agent alive ? "+agent.isAlive());
 				agent.start();
 			}else{
 				
@@ -153,13 +154,44 @@ public class Login {
 	}
 	
 	@OnMessage
-    public void loginResponse(Session session, String msg, boolean last) throws JSONException 
+    public void loginResponse(Session session, String msg, boolean last) throws JSONException, IOException 
     {
 		System.out.println("----OnMessage---OnMessage---OnMessage----OnMessage-----");
 		
 			
 		JSONObject blub = new JSONObject(msg);
-		
+		if(blub.keys().next().equals("RESPONSE")){
+			System.out.println("ANTWORT ERHALTEN !!!!!!!!!!!");
+			System.out.println(" Nummer der Antwort"+msg);
+			long playerid = GameConnections.getID(session);
+			System.out.println("ID vom Spieler"+GameConnections.getID(session));
+			quiz=Quiz.getInstance();
+			QuizError error = new QuizError();
+			Collection<Player> players = quiz.getPlayerList();
+			Long correctIndex=(long) -1;
+			for(Player p : players){
+				if(p.getId()==GameConnections.getID(session)){
+					correctIndex=quiz.answerQuestion(p,blub.getLong("RESPONSE") , error);
+					JSONObject obj = new JSONObject();
+					obj.put("RESPONSE",correctIndex);
+					System.out.println("korrekte antwort wäre "+correctIndex +" gewesen");
+					session.getBasicRemote().sendText(obj.toString());
+					System.out.println("korrekte antwort versendet");
+					if(blub.getLong("RESPONSE")==correctIndex){
+						System.out.println("new Score:"+p.getScore());
+						agent = ScoreAgent.getInstance();
+						GameConnections.updateJSONScore(playerid,p.getScore());
+						synchronized (agent) {
+								agent.restart();
+						}
+					
+					}
+					
+					break;
+				}
+				
+			}
+		}
 		if(blub.keys().next().equals("CATALOG")){
 			System.out.println("Neuer Katalog erhalten:"+blub.getString("CATALOG"));
 			
@@ -169,6 +201,8 @@ public class Login {
 				if(!handler.isAlive()){		
 					System.out.println("Handler lebt nicht ");
 					handler.setName(blub.getString("CATALOG"));
+					tmpCatalog=blub.getString("CATALOG");
+					System.out.println("TMP CAT TMP CAT TMP CAT"+tmpCatalog);
 					handler.start();
 
 				}
@@ -186,6 +220,7 @@ public class Login {
 					System.out.println("Handler lebt noch");
 					handler.catalogName=blub.getString("CATALOG");
 					tmpCatalog=blub.getString("CATALOG");
+					System.out.println("TMP CAT TMP CAT TMP CAT"+tmpCatalog);
 					quiz.changeCatalog(leader, tmpCatalog, error); //
 //					handler.setName(blub.getString("CATALOG"));
 					handler.notify();
@@ -211,37 +246,12 @@ public class Login {
 					game.addPlayer(p, error);
 				}
 				System.out.println("NACH schleife");
-				TimerTask task = new TimerTask() {
-					
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						
-					}
-				};
-				quest =quiz.requestQuestion(leader, task, error);
-				System.out.println("Nach request");
-				Session leader =GameConnections.getSession((long)0);
-				String frage=quest.getQuestion();
-				List<String> antworten = quest.getAnswerList();
-				Long timeout=quest.getTimeout();
-				JSONArray arj = new JSONArray();
-				arj.put(frage);
-				for(String s:antworten){
-					arj.put(s);
-				}
-				arj.put(timeout);
 				
-				JSONObject question = new JSONObject();
-				question.put("QUESTION", arj);
-				try {
-					leader.getBasicRemote().sendText(question.toString());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			System.out.println("Players in start:"+game.getPlayers());
-			System.out.println("Catalog in Game:"+game.getCatalog());
+				quester=QuestHandler.getInstance();
+				
+				quester.start();
+				
+
 			
 		}
 		if(blub.keys().next().equals("LOGOUT")){
@@ -250,13 +260,18 @@ public class Login {
 		
 		if(blub.keys().next().equals("NEWPLAYER")){
 			System.out.println("NewPlayer detected");
-			
-		
-		System.out.println("BLUB"+blub.getString("NEWPLAYER"));
-		System.out.println("BLUB"+blub.has("NEWPLAYER"));
+			quiz=Quiz.getInstance();
+			handler = CatalogHandler.getInstance();
+			if(quiz.getCurrentCatalog()!=null){
+				System.out.println("CATALOG schon gesetzt : "+ tmpCatalog);
+				JSONObject j = new JSONObject();
+				j.put("CATALOG", handler.getCatalogName());
+				session.getBasicRemote().sendText(j.toString());
+	
+			}
 
 		
-		quiz=Quiz.getInstance();
+		
 		QuizError error = new QuizError();
 		Player player=quiz.createPlayer(blub.getString("NEWPLAYER"), error);
 		System.out.println(player.getName());
@@ -278,6 +293,8 @@ public class Login {
 				e.printStackTrace();
 			}
 		}
+
+		
 		
 		ScoreAgent agent= ScoreAgent.getInstance();
 		if(!agent.isAlive()){
@@ -288,16 +305,14 @@ public class Login {
 				agent.restart();
 			}
 		}
-		handler = CatalogHandler.getInstance();
-		
 		
 		if(!handler.isAlive()){		
 			System.out.println("Handler lebt nicht ");
-//			handler.setName(blub.getString("CATALOG"));
+			//			handler.setName(blub.getString("CATALOG"));
 			handler.start();
 
 		}
-
+	
 		}
     }
 }

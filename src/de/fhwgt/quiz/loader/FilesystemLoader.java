@@ -198,10 +198,10 @@ public class FilesystemLoader implements CatalogLoader {
             	
             	Frage=Fragen.get(i);
             	question = new Question(Frage.getChildText("Fragetext"));
-            	System.out.println("Fragetext"+Frage.getChildText("Fragetext"));
+//            	System.out.println("Fragetext"+Frage.getChildText("Fragetext"));
             	question.setTimeout(Integer.parseInt(Frage.getAttributeValue("timeout")));
             	List<Element> answers = Frage.getChildren("Antwort");
-            	System.out.println("Antworten:"+answers.get(0).getText()+" "+answers.get(1).getText()+" "+answers.get(2).getText()+" "+answers.get(3).getText());
+//            	System.out.println("Antworten:"+answers.get(0).getText()+" "+answers.get(1).getText()+" "+answers.get(2).getText()+" "+answers.get(3).getText());
             
             	question.addAnswer(answers.get(0).getText());
             	question.addBogusAnswer(answers.get(1).getText());
