@@ -14,6 +14,7 @@ public class ScoreAgent extends Thread{
 
 	private boolean running = true;
 	public static final ScoreAgent agent=new ScoreAgent();
+	public boolean started=false;
 	ScoreAgent(){
 		
 	}
@@ -72,7 +73,7 @@ public class ScoreAgent extends Thread{
 					e.printStackTrace();
 				}
 		     }
-		 	if(GameConnections.SessionCount()==2){
+		 	if(GameConnections.SessionCount()==2 && !started){
 				System.out.println("Start möglich");
 				Session leader =GameConnections.getSession((long)0);
 				JSONObject start= new JSONObject();

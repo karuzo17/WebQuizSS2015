@@ -7,21 +7,21 @@ var tmpCat = false;
 var animation;
 var timer;
 var question;
-var waitingForNewQuestion = false;
+var sendAnswer;
+var firstQuestion = true;
+var waitingForResponse = false;
 
-//Dieser Text ist nur zum Pushen da
-//Dieser Text ist nur zum Pushen da
-//Dieser Text ist nur zum Pushen da
-//Dieser Text ist nur zum Pushen da
-//Dieser Text ist nur zum Pushen da
-//Dieser Text ist nur zum Pushen da
+// Dieser Text ist nur zum Pushen da
+// Dieser Text ist nur zum Pushen da
+// Dieser Text ist nur zum Pushen da
+// Dieser Text ist nur zum Pushen da
+// Dieser Text ist nur zum Pushen da
+// Dieser Text ist nur zum Pushen da
 
 function initLogin() { // Listener registrieren fÃ¼r Buttons
-	
+
 	startNewGame();
-	
-	//var login = window.document.getElementById("loginButton");
-	//login.addEventListener("click", send, false);
+
 	initPlayerTable();
 
 	var url = 'ws://localhost:8080/WebQuizSS15/Login';
@@ -34,31 +34,29 @@ function initLogin() { // Listener registrieren fÃ¼r Buttons
 	socket.onmessage = empfange;
 }
 
-function startNewGame(){
-	
+function startNewGame() {
+
 	var main = document.getElementById("main");
-	
+
 	var loginForm = document.createElement("div");
 	loginForm.id = "loginForm";
-	
+
 	main.appendChild(loginForm);
-	
-	
+
 	var loginButton = document.createElement("input");
 	loginButton.type = "button";
 	loginButton.value = "Login";
 	loginButton.id = "loginButton";
 	loginButton.addEventListener("click", send, false);
-	
+
 	var userName = document.createElement("input");
 	userName.type = "text";
 	userName.name = "userName";
 	userName.id = "userName";
-	
-	
+
 	loginForm.appendChild(loginButton);
 	loginForm.appendChild(userName);
-	
+
 }
 
 // Listener fÃ¼r den Button go
@@ -128,6 +126,7 @@ function empfange(message) {
 
 		var playerTable = document.getElementById("playerTable");
 
+<<<<<<< HEAD
 		//alert("json.PLAYERLIST.length:    " + json.PLAYERLIST.length);
 		for (var i = 0; i < 6; i++) {
 
@@ -135,6 +134,15 @@ function empfange(message) {
 				document.getElementById("playerCol" + i).innerHTML = json.PLAYERLIST[i].username;
 				document.getElementById("scoreCol" + i).innerHTML = json.PLAYERLIST[i].score;
 			}else{
+=======
+		// alert("json.PLAYERLIST.length: " + json.PLAYERLIST.length);
+		for (var i = 0; i < 6; i++) {
+
+			if (i < json.PLAYERLIST.length) {
+				document.getElementById("playerCol" + i).innerHTML = json.PLAYERLIST[i].username;
+				document.getElementById("scoreCol" + i).innerHTML = json.PLAYERLIST[i].score;
+			} else {
+>>>>>>> ServerCopy
 				document.getElementById("playerCol" + i).innerHTML = "-";
 				document.getElementById("scoreCol" + i).innerHTML = 0;
 			}
@@ -156,14 +164,73 @@ function empfange(message) {
 
 	if (json.QUESTION) {
 
+<<<<<<< HEAD
 		var question = json.QUESTION;
 		createQuestion(question);
 		waitingForNewQuestion = false;
+=======
+		if (firstQuestion) {
+			firstQuestion = false;
+			cleanMain();
+			tableCreate();
+		}
+
+		var question = json.QUESTION;
+		createQuestion(question);
+>>>>>>> ServerCopy
 	}
 
 	if (json.ERROR) {
 
 		alert("Got error:");
+	}
+
+	if (json.RESPONSE) {
+
+		var correctAnswer = json.RESPONSE;
+		alert("CorrectAnswer:  " + correctAnswer);
+		//setAnswerBackground(correctAnswer);
+
+		// hier drei sekunden warten
+		setTimeout(function() {
+			var question = JSON.stringify({
+				"QUESTION" : true
+			});
+			socket.send(question);
+			waitingForResponse = false;
+			alert("waitingFornextquestion");
+		}, 3000);
+	}
+	
+	if(json.GAMEOVER){
+		//zu implementieren
+		createGameoverScreen();
+	}
+
+	if(json.RANK){
+		//zu implementieren
+		setRankScreen();
+	}
+
+	if(json.ERROR){
+
+		//zu implementieren
+		alert(json.ERROR);
+	}
+}
+
+function setAnswerBackground(correctA) {
+
+	var cols = document.getElementsByClassName("cols");
+
+	for (var t = 0; t < 4; t++) {
+		if (cols[t].id === "answer" + correctA) {
+			document.getElementById("answer" + correctA).style.background = "Green";
+			// nicht vergessen Farben bei neuer Frage zurÃƒÂ¼ckzusetzen
+		}
+		if (cols[t].id === "answer" + sendAnswer && sendAnswer !== correctA) {
+			document.getElementById("answer" + sendAnswer).style.background = "Red";
+		}
 	}
 }
 
@@ -190,10 +257,6 @@ function startGame() {
 	} else {
 		alert("first pick cat!");
 	}
-	if (tmpCat) {
-		cleanMain();
-		tableCreate();
-	}
 }
 
 function catalogSelected(name) {
@@ -217,6 +280,7 @@ function createQuestion(questionFromServer) {
 
 	for (var aC = 0; aC < 4; aC++) {
 		document.getElementById("answer" + aC).innerHTML = questionFromServer[aC + 1];
+		document.getElementById("answer"+ aC).style.background = "Whitesmoke";
 	}
 
 	timer = questionFromServer[5] / 1000;
@@ -296,17 +360,25 @@ function countTime() {
 
 function answerClicked(event) {
 	var answerClicked = event.target;
-	var answerForServer;
 
-	if (!waitingForNewQuestion) {
+	if (!waitingForResponse) {
 		for (var i = 0; i < 4; i++) {
 			if (answerClicked === document.getElementById("answer" + i)) {
-				alert("Clicked answer: " + i);
-				answerForServer = i;
-				waitingForNewQuestion = true;
+				sendAnswer = i;
 				window.clearInterval(animation);
+<<<<<<< HEAD
+=======
+				var answer = JSON.stringify({
+					"RESPONSE" : sendAnswer
+				});
+				socket.send(answer);
+				waitingForResponse = true;
+>>>>>>> ServerCopy
 			}
 		}
+		alert("jetzt warten");
+	} else {
+		alert("Warte du hund!");
 	}
 }
 
