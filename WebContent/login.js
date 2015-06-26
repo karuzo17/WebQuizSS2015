@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', initLogin, false);
-
+window.onbeforeunload=tabClose;
 var socket;
 var bereitZumSenden = false;
 var firstPlayer = false;
@@ -101,17 +101,29 @@ function ErrorHandler(event) {
 
 function Closing(event) {
 
+	
+}
+function tabClose(event){
 	var string = JSON.stringify({
 		"LOGOUT" : true
 	});
 	socket.send(string);
 }
 
+/**
+ * @param message
+ */
+/**
+ * @param message
+ */
 function empfange(message) {
 
 	var text = message.data;
 	var json = JSON.parse(text);
-
+//	console.log(json);
+	if(typeof json ==json.RESPONSE){
+		console.log("de puta ");
+	}
 	if (json.CATALOG) {
 
 		console.log("Hab katalog bekommen");
@@ -169,11 +181,17 @@ function empfange(message) {
 	}
 
 	if (json.RESPONSE) {
-
+		
+		console.log("Hab die Antwort erhalten");
 		var correctAnswer = json.RESPONSE;
 		
 		setAnswerBackground(correctAnswer);
+<<<<<<< HEAD
 
+=======
+		console.log("korrekte Antwort"+correctAnswer);
+		console.log("gewähöte Antwort"+sendAnswer);
+>>>>>>> ServerCopy
 		setTimeout(function() {
 			waitingForResponse = false;
 			var question = JSON.stringify({
@@ -203,12 +221,24 @@ function empfange(message) {
 
 function setAnswerBackground(correctA) {
 	
+<<<<<<< HEAD
 	alert("drin!");
+=======
+	console.log("answer background");
+//	alert("drin!");
+>>>>>>> ServerCopy
 
 	var cols = document.getElementsByClassName("cols");
 
 	if(sendAnswer === correctA){
 		document.getElementById("answer" + correctA).style.background = "#BEF781";
+<<<<<<< HEAD
+=======
+	} 
+	else if(sendAnswer === 4){
+//		alert("deine mom stinkt");
+		document.getElementById("answer" + correctA).style.background = "#BEF781";
+>>>>>>> ServerCopy
 	}else{
 		document.getElementById("answer" + sendAnswer).style.background = "#F78181";
 		document.getElementById("answer" + correctA).style.background = "#BEF781";
@@ -325,14 +355,22 @@ function initTimer() {
 }
 
 function countTime() {
+	
 
 	var questionText = document.getElementById("questionText");
-
+	
 	timer = timer - 1;
 	if (timer == 0) {
 		questionText.innerHTML = question + "<br /><br /><br />"
 				+ "Seconds left:   0";
 		window.clearInterval(animation);
+		var response = JSON.stringify({
+			"RESPONSE" : 4
+		});
+		sendAnswer = 4;
+		console.log("sendAnswer"+sendAnswer);
+		waitingForResponse=true;
+		socket.send(response);
 	} else {
 		questionText.innerHTML = question + "<br /><br /><br />"
 				+ "Seconds left:  " + timer;
@@ -341,8 +379,9 @@ function countTime() {
 
 function answerClicked(event) {
 	var answerClicked = event.target;
-
+	console.log("AnswerClicked");
 	if (!waitingForResponse) {
+		console.log("IF___AnswerClicked");
 		for (var i = 0; i < 4; i++) {
 			if (answerClicked === document.getElementById("answer" + i)) {
 				sendAnswer = i;
@@ -351,6 +390,7 @@ function answerClicked(event) {
 					"RESPONSE" : sendAnswer
 				});
 				socket.send(answer);
+				console.log("Response in answerClicked versendet");
 				waitingForResponse = true;
 			}
 		}

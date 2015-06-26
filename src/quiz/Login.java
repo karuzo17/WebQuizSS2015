@@ -28,6 +28,8 @@ import org.json.JSONObject;
 
 
 
+
+
 import de.fhwgt.quiz.application.Game;
 import de.fhwgt.quiz.application.Player;
 import de.fhwgt.quiz.application.Question;
@@ -77,7 +79,7 @@ public class Login {
 	    	  GameConnections.SessionTMPRemove(session);
 	    	  ScoreAgent agent= ScoreAgent.getInstance();
 				if(!agent.isAlive()){
-					agent.start();
+					agent.start(); // könnte das Problem sein 
 				}else{
 					
 					synchronized (agent) {
@@ -185,7 +187,9 @@ public class Login {
 			System.out.println(" Nummer der Antwort"+msg);
 			long playerid = GameConnections.getID(session);
 			System.out.println("ID vom Spieler"+GameConnections.getID(session));
-			
+//			if(blub.getLong("RESPONSE")==-1){
+//				
+//			}
 			QuizError error = new QuizError();
 			Collection<Player> players = quiz.getPlayerList();
 			Long correctIndex=(long) -1;
@@ -278,7 +282,7 @@ public class Login {
 			
 		}
 		if(blub.keys().next().equals("LOGOUT")){
-			System.out.println("Spieler mit Session"+session+"hat sich abgemeldet");
+			System.out.println("-------Spieler mit Session"+session+"hat sich abgemeldet-------");
 		}
 		
 		if(blub.keys().next().equals("NEWPLAYER")){
