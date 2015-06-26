@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', initLogin, false);
-
+window.onbeforeunload=tabClose;
 var socket;
 var bereitZumSenden = false;
 var firstPlayer = false;
@@ -101,17 +101,29 @@ function ErrorHandler(event) {
 
 function Closing(event) {
 
+	
+}
+function tabClose(event){
 	var string = JSON.stringify({
 		"LOGOUT" : true
 	});
 	socket.send(string);
 }
 
+/**
+ * @param message
+ */
+/**
+ * @param message
+ */
 function empfange(message) {
 
 	var text = message.data;
 	var json = JSON.parse(text);
-
+//	console.log(json);
+	if(typeof json ==json.RESPONSE){
+		console.log("de puta ");
+	}
 	if (json.CATALOG) {
 
 		console.log("Hab katalog bekommen");
@@ -126,7 +138,6 @@ function empfange(message) {
 
 		var playerTable = document.getElementById("playerTable");
 
-		// alert("json.PLAYERLIST.length: " + json.PLAYERLIST.length);
 		for (var i = 0; i < 6; i++) {
 
 			if (i < json.PLAYERLIST.length) {
@@ -170,19 +181,20 @@ function empfange(message) {
 	}
 
 	if (json.RESPONSE) {
-
+		
+		console.log("Hab die Antwort erhalten");
 		var correctAnswer = json.RESPONSE;
-		alert("CorrectAnswer:  " + correctAnswer);
-		//setAnswerBackground(correctAnswer);
-
-		// hier drei sekunden warten
+		
+		setAnswerBackground(correctAnswer);
+		console.log("korrekte Antwort"+correctAnswer);
+		console.log("gewähöte Antwort"+sendAnswer);
 		setTimeout(function() {
+			waitingForResponse = false;
 			var question = JSON.stringify({
 				"QUESTION" : true
 			});
 			socket.send(question);
-			waitingForResponse = false;
-			alert("waitingFornextquestion");
+			
 		}, 3000);
 	}
 	
@@ -204,17 +216,21 @@ function empfange(message) {
 }
 
 function setAnswerBackground(correctA) {
+	
+	console.log("answer background");
+//	alert("drin!");
 
 	var cols = document.getElementsByClassName("cols");
 
-	for (var t = 0; t < 4; t++) {
-		if (cols[t].id === "answer" + correctA) {
-			document.getElementById("answer" + correctA).style.background = "Green";
-			// nicht vergessen Farben bei neuer Frage zurÃƒÂ¼ckzusetzen
-		}
-		if (cols[t].id === "answer" + sendAnswer && sendAnswer !== correctA) {
-			document.getElementById("answer" + sendAnswer).style.background = "Red";
-		}
+	if(sendAnswer === correctA){
+		document.getElementById("answer" + correctA).style.background = "#BEF781";
+	} 
+	else if(sendAnswer === 4){
+//		alert("deine mom stinkt");
+		document.getElementById("answer" + correctA).style.background = "#BEF781";
+	}else{
+		document.getElementById("answer" + sendAnswer).style.background = "#F78181";
+		document.getElementById("answer" + correctA).style.background = "#BEF781";
 	}
 }
 
@@ -264,7 +280,7 @@ function createQuestion(questionFromServer) {
 
 	for (var aC = 0; aC < 4; aC++) {
 		document.getElementById("answer" + aC).innerHTML = questionFromServer[aC + 1];
-		document.getElementById("answer"+ aC).style.background = "Whitesmoke";
+		document.getElementById("answer" + aC).style.background = "Whitesmoke";
 	}
 
 	timer = questionFromServer[5] / 1000;
@@ -328,14 +344,22 @@ function initTimer() {
 }
 
 function countTime() {
+	
 
 	var questionText = document.getElementById("questionText");
-
+	
 	timer = timer - 1;
 	if (timer == 0) {
 		questionText.innerHTML = question + "<br /><br /><br />"
 				+ "Seconds left:   0";
 		window.clearInterval(animation);
+		var response = JSON.stringify({
+			"RESPONSE" : 4
+		});
+		sendAnswer = 4;
+		console.log("sendAnswer"+sendAnswer);
+		waitingForResponse=true;
+		socket.send(response);
 	} else {
 		questionText.innerHTML = question + "<br /><br /><br />"
 				+ "Seconds left:  " + timer;
@@ -344,8 +368,9 @@ function countTime() {
 
 function answerClicked(event) {
 	var answerClicked = event.target;
-
+	console.log("AnswerClicked");
 	if (!waitingForResponse) {
+		console.log("IF___AnswerClicked");
 		for (var i = 0; i < 4; i++) {
 			if (answerClicked === document.getElementById("answer" + i)) {
 				sendAnswer = i;
@@ -354,13 +379,11 @@ function answerClicked(event) {
 					"RESPONSE" : sendAnswer
 				});
 				socket.send(answer);
+				console.log("Response in answerClicked versendet");
 				waitingForResponse = true;
 			}
 		}
-		alert("jetzt warten");
-	} else {
-		alert("Warte du hund!");
-	}
+	} 
 }
 
 function initPlayerTable() {
