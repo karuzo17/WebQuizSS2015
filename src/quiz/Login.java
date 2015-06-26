@@ -187,7 +187,9 @@ public class Login {
 			System.out.println(" Nummer der Antwort"+msg);
 			long playerid = GameConnections.getID(session);
 			System.out.println("ID vom Spieler"+GameConnections.getID(session));
-			
+//			if(blub.getLong("RESPONSE")==-1){
+//				
+//			}
 			QuizError error = new QuizError();
 			Collection<Player> players = quiz.getPlayerList();
 			Long correctIndex=(long) -1;
