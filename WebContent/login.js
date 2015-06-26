@@ -133,12 +133,15 @@ function empfange(message) {
 		
 		var playerTable = document.getElementById("playerTable");
 
-		for (var i = 0; i <= json.PLAYERLIST.length; i++) {
-			var name = json.PLAYERLIST[i].username;
-			document.getElementById("playerCol" + i).innerHTML = name;
-//			console.log(name);
-//			alert(name);
-			document.getElementById("scoreCol" + i).innerHTML = json.PLAYERLIST[i].score;
+		for (var i = 0; i < 6; i++) {
+
+			if(i < json.PLAYERLIST.length){
+				document.getElementById("playerCol" + i).innerHTML = json.PLAYERLIST[i].username;
+				document.getElementById("scoreCol" + i).innerHTML = json.PLAYERLIST[i].score;
+			}else{
+				document.getElementById("playerCol" + i).innerHTML = "-";
+				document.getElementById("scoreCol" + i).innerHTML = 0;
+			}
 		}
 	}
 
@@ -156,7 +159,7 @@ function empfange(message) {
 	}
 
 	if (json.QUESTION) {
-		alert("quest erhalten");
+//		alert("quest erhalten");
 		console.log("quest erhalten");
 		var question = json.QUESTION;
 		createQuestion(question);
@@ -167,6 +170,7 @@ function empfange(message) {
 		
 		console.log(json.RESPONSE);
 //		alert("korrekte Antwort wäre: "+ json.RESPONSE +" gewesen");
+		setTimeout('sendQuestion()',3000);
 	}
 
 	if (json.ERROR) {
@@ -175,6 +179,12 @@ function empfange(message) {
 	}
 }
 
+function sendQuestion(){
+	var newQuestion = JSON.stringify({
+		"QUESTION" : true
+	});
+	socket.send(newQuestion);
+}
 function createGameStartButton() {
 
 	var Button = document.createElement("input");

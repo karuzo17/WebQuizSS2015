@@ -69,6 +69,8 @@ public class QuestHandler extends Thread {
 							for(String s:antworten){
 								arj.put(s);
 							}
+							System.out.println("TimerTask."+timeoutTask.scheduledExecutionTime());
+							
 							arj.put(timeout);
 							
 							JSONObject question = new JSONObject();

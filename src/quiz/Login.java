@@ -16,12 +16,13 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import jdk.nashorn.internal.parser.JSONParser;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 
 
@@ -158,14 +159,31 @@ public class Login {
     {
 		System.out.println("----OnMessage---OnMessage---OnMessage----OnMessage-----");
 		
-			
+		
+		
 		JSONObject blub = new JSONObject(msg);
+		quiz=Quiz.getInstance();
+		
+		if(blub.keys().next().equals("QUESTION")){
+			System.out.println("REQUEST NEUE FrAGE");
+			String question = buildQuestion(session);
+			System.out.println("QUESTION IS"+question);
+					try {
+			
+						session.getBasicRemote().sendText(question, true);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		}
+		
+		
 		if(blub.keys().next().equals("RESPONSE")){
 			System.out.println("ANTWORT ERHALTEN !!!!!!!!!!!");
 			System.out.println(" Nummer der Antwort"+msg);
 			long playerid = GameConnections.getID(session);
 			System.out.println("ID vom Spieler"+GameConnections.getID(session));
-			quiz=Quiz.getInstance();
+			
 			QuizError error = new QuizError();
 			Collection<Player> players = quiz.getPlayerList();
 			Long correctIndex=(long) -1;
@@ -246,6 +264,9 @@ public class Login {
 					game.addPlayer(p, error);
 				}
 				System.out.println("NACH schleife");
+				agent = ScoreAgent.getInstance();
+				agent.started=true;
+				
 				
 				quester=QuestHandler.getInstance();
 				
@@ -315,4 +336,50 @@ public class Login {
 	
 		}
     }
+	
+	public String buildQuestion(Session session){
+		System.out.println("QUESTION-BUILDER");
+		Question quest;
+		quiz=Quiz.getInstance();
+		long playerid = GameConnections.getID(session);
+		Collection<Player> players = quiz.getPlayerList();
+		QuizError error= new QuizError();
+		JSONObject question= new JSONObject();
+    	TimerTask timeoutTask = new TimerTask() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		System.out.println("vor For ");
+		for(Player p : players){
+			if(p.getId()==playerid){
+				quest =quiz.requestQuestion(p, timeoutTask, error);
+				String frage = quest.getQuestion();
+    			List<String> antworten = quest.getAnswerList();
+				Long timeout=quest.getTimeout();
+				JSONArray arj = new JSONArray();
+				arj.put(frage);
+				for(String s:antworten){
+					arj.put(s);
+				}
+				System.out.println("TimerTask."+timeoutTask.scheduledExecutionTime());
+				
+				arj.put(timeout);
+				
+				
+				try {
+					question.put("QUESTION", arj);
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				break;
+		
+			}
+		}
+		return question.toString();
+	}
 }
