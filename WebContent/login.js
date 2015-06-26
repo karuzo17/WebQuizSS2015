@@ -126,23 +126,12 @@ function empfange(message) {
 
 		var playerTable = document.getElementById("playerTable");
 
-<<<<<<< HEAD
-		//alert("json.PLAYERLIST.length:    " + json.PLAYERLIST.length);
-		for (var i = 0; i < 6; i++) {
-
-			if(i < json.PLAYERLIST.length){
-				document.getElementById("playerCol" + i).innerHTML = json.PLAYERLIST[i].username;
-				document.getElementById("scoreCol" + i).innerHTML = json.PLAYERLIST[i].score;
-			}else{
-=======
-		// alert("json.PLAYERLIST.length: " + json.PLAYERLIST.length);
 		for (var i = 0; i < 6; i++) {
 
 			if (i < json.PLAYERLIST.length) {
 				document.getElementById("playerCol" + i).innerHTML = json.PLAYERLIST[i].username;
 				document.getElementById("scoreCol" + i).innerHTML = json.PLAYERLIST[i].score;
 			} else {
->>>>>>> ServerCopy
 				document.getElementById("playerCol" + i).innerHTML = "-";
 				document.getElementById("scoreCol" + i).innerHTML = 0;
 			}
@@ -164,11 +153,6 @@ function empfange(message) {
 
 	if (json.QUESTION) {
 
-<<<<<<< HEAD
-		var question = json.QUESTION;
-		createQuestion(question);
-		waitingForNewQuestion = false;
-=======
 		if (firstQuestion) {
 			firstQuestion = false;
 			cleanMain();
@@ -177,7 +161,6 @@ function empfange(message) {
 
 		var question = json.QUESTION;
 		createQuestion(question);
->>>>>>> ServerCopy
 	}
 
 	if (json.ERROR) {
@@ -188,17 +171,16 @@ function empfange(message) {
 	if (json.RESPONSE) {
 
 		var correctAnswer = json.RESPONSE;
-		alert("CorrectAnswer:  " + correctAnswer);
-		//setAnswerBackground(correctAnswer);
+		
+		setAnswerBackground(correctAnswer);
 
-		// hier drei sekunden warten
 		setTimeout(function() {
+			waitingForResponse = false;
 			var question = JSON.stringify({
 				"QUESTION" : true
 			});
 			socket.send(question);
-			waitingForResponse = false;
-			alert("waitingFornextquestion");
+			
 		}, 3000);
 	}
 	
@@ -220,17 +202,16 @@ function empfange(message) {
 }
 
 function setAnswerBackground(correctA) {
+	
+	alert("drin!");
 
 	var cols = document.getElementsByClassName("cols");
 
-	for (var t = 0; t < 4; t++) {
-		if (cols[t].id === "answer" + correctA) {
-			document.getElementById("answer" + correctA).style.background = "Green";
-			// nicht vergessen Farben bei neuer Frage zurÃƒÂ¼ckzusetzen
-		}
-		if (cols[t].id === "answer" + sendAnswer && sendAnswer !== correctA) {
-			document.getElementById("answer" + sendAnswer).style.background = "Red";
-		}
+	if(sendAnswer === correctA){
+		document.getElementById("answer" + correctA).style.background = "#BEF781";
+	}else{
+		document.getElementById("answer" + sendAnswer).style.background = "#F78181";
+		document.getElementById("answer" + correctA).style.background = "#BEF781";
 	}
 }
 
@@ -280,7 +261,7 @@ function createQuestion(questionFromServer) {
 
 	for (var aC = 0; aC < 4; aC++) {
 		document.getElementById("answer" + aC).innerHTML = questionFromServer[aC + 1];
-		document.getElementById("answer"+ aC).style.background = "Whitesmoke";
+		document.getElementById("answer" + aC).style.background = "Whitesmoke";
 	}
 
 	timer = questionFromServer[5] / 1000;
@@ -366,20 +347,14 @@ function answerClicked(event) {
 			if (answerClicked === document.getElementById("answer" + i)) {
 				sendAnswer = i;
 				window.clearInterval(animation);
-<<<<<<< HEAD
-=======
 				var answer = JSON.stringify({
 					"RESPONSE" : sendAnswer
 				});
 				socket.send(answer);
 				waitingForResponse = true;
->>>>>>> ServerCopy
 			}
 		}
-		alert("jetzt warten");
-	} else {
-		alert("Warte du hund!");
-	}
+	} 
 }
 
 function initPlayerTable() {
