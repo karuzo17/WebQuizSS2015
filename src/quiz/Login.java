@@ -79,7 +79,7 @@ public class Login {
 	    	  GameConnections.SessionTMPRemove(session);
 	    	  ScoreAgent agent= ScoreAgent.getInstance();
 				if(!agent.isAlive()){
-					agent.start();
+					agent.start(); // könnte das Problem sein 
 				}else{
 					
 					synchronized (agent) {
@@ -280,7 +280,7 @@ public class Login {
 			
 		}
 		if(blub.keys().next().equals("LOGOUT")){
-			System.out.println("Spieler mit Session"+session+"hat sich abgemeldet");
+			System.out.println("-------Spieler mit Session"+session+"hat sich abgemeldet-------");
 		}
 		
 		if(blub.keys().next().equals("NEWPLAYER")){

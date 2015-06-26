@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', initLogin, false);
+window.onbeforeunload=tabClose;
 
 var socket;
 var bereitZumSenden = false;
@@ -100,7 +101,13 @@ function ErrorHandler(event) {
 }
 
 function Closing(event) {
+	alert("closing event");
+	//autodetect tab close 
+	
+}
 
+function tabClose(event){
+	console.log("tab-Close");
 	var string = JSON.stringify({
 		"LOGOUT" : true
 	});
