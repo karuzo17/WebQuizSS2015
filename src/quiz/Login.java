@@ -197,7 +197,9 @@ public class Login {
 				if(p.getId()==GameConnections.getID(session)){
 					correctIndex=quiz.answerQuestion(p,blub.getLong("RESPONSE") , error);
 					JSONObject obj = new JSONObject();
-					obj.put("RESPONSE",correctIndex);
+					JSONArray arj = new JSONArray();
+					arj.put(correctIndex);
+					obj.put("RESPONSE",arj);
 					System.out.println("korrekte antwort wäre "+correctIndex +" gewesen");
 					session.getBasicRemote().sendText(obj.toString());
 					System.out.println("korrekte antwort versendet");
