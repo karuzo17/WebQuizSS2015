@@ -177,7 +177,15 @@ public class Login {
 				JSONObject obj = new JSONObject();
 				obj.put("WAIT", true);
 				session.getBasicRemote().sendText(obj.toString(), true);
+<<<<<<< HEAD
 			
+=======
+				GameConnections.addPlayerToDonePlayers(session);
+				if(GameConnections.getDonePlayersSize()==GameConnections.SessionCount()){
+					System.out.println("Alle Spieler fertig");
+					sendRanking();
+				}
+>>>>>>> ServerCopy
 			} else {
 
 				try {
@@ -462,4 +470,15 @@ public class Login {
 			}
 		}
 	}
+<<<<<<< HEAD
+=======
+	
+	public void sendRanking(){
+		agent.gameover=true;
+		
+		synchronized (agent) {
+			agent.restart();
+		}
+	}
+>>>>>>> ServerCopy
 }
