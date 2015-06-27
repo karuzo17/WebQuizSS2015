@@ -1,6 +1,7 @@
 package quiz;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -17,6 +18,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.sun.swing.internal.plaf.synth.resources.synth;
+
+import de.fhwgt.quiz.application.Player;
+
 public class GameConnections {
 
 	public static  JSONArray array = new JSONArray();
@@ -24,7 +29,19 @@ public class GameConnections {
 	public static final LinkedHashMap<Long,Session> socketliste = new LinkedHashMap<Long,Session>();  				// Vorsicht unsynchronisiert!!;
 	public static final ArrayList<Session> tmplist= new ArrayList<Session>();
 	public static final LinkedHashMap<Long,String> liste = new LinkedHashMap<Long,String>();  
+	public static final ArrayList<Session> donePlayers =new ArrayList<Session>();
+	public static final Map<Long,Long> sortedHash = new LinkedHashMap<Long, Long>();
+
+	private static boolean isCalculated=false;
+	private static Map<Long,Integer> ranked = new HashMap<Long, Integer>();
 	
+	
+	public static synchronized void addPlayerToDonePlayers(Session value){
+		donePlayers.add(value);
+	}
+	public static synchronized int getDonePlayersSize(){
+		return donePlayers.size();
+	}
 	public static synchronized Map<Long, Session> getMap(){
 		return socketliste;
 	}
@@ -52,11 +69,46 @@ public class GameConnections {
 
 		}
 	}
+	
+	public static void calcRank(){
+		
+		Map<Long,Long> sorted =sortByValues(sortedHash);
+		int i =1;
+		for(Map.Entry<Long,Long> entry : sorted.entrySet()){
+			System.out.println("entrykey"+entry.getKey()+"Vaule"+entry.getValue());
+			ranked.put(entry.getKey(), i);
+			i++;
+		}
+	}
+	public static synchronized int getRank(Session session){
+		//rank ist noch buggy
+		if(!isCalculated){
+			calcRank();
+			isCalculated=true;
+		}
+		long id=getID(session);
+		System.out.println("ID des Spielers"+id);
+		int rank=-1;
+		for(Long key : ranked.keySet()){
+			System.out.println(ranked.get(key));
+			System.out.println("id des spielers"+id);
+			System.out.println("in for"+key);
+			if(id==key){
+				System.out.println("in if");
+				
+				rank = ranked.get(key);
+			}
+			
+			
+		}
+		return rank;
+		
+	}
 	public static synchronized void updateHighScoreList() throws JSONException{
 		
 		System.out.println("---------HighScore-Update-------");
 		JSONArray arj = array;
-		Map<Long,Long> sortedHash = new LinkedHashMap<Long, Long>();
+		
 		Map<Long,String> names = new LinkedHashMap<Long, String>();
 		JSONArray sorted = new JSONArray();
 		System.out.println("ARRAYJSON"+arj);
