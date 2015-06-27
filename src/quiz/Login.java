@@ -177,7 +177,11 @@ public class Login {
 				JSONObject obj = new JSONObject();
 				obj.put("WAIT", true);
 				session.getBasicRemote().sendText(obj.toString(), true);
-			
+				GameConnections.addPlayerToDonePlayers(session);
+				if(GameConnections.getDonePlayersSize()==GameConnections.SessionCount()){
+					System.out.println("Alle Spieler fertig");
+					sendRanking();
+				}
 			} else {
 
 				try {
@@ -460,6 +464,14 @@ public class Login {
 					agent.restart();
 				}
 			}
+		}
+	}
+	
+	public void sendRanking(){
+		agent.gameover=true;
+		
+		synchronized (agent) {
+			agent.restart();
 		}
 	}
 }

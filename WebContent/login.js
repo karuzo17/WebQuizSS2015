@@ -206,6 +206,7 @@ function empfange(message) {
 	}
 
 	if(json.RANK){
+		alert("Du hast "+json.RANK+" erreicht");
 		//zu implementieren
 		setRankScreen();
 	}
