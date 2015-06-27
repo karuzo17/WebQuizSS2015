@@ -37,54 +37,55 @@ import de.fhwgt.quiz.loader.LoaderException;
 @WebServlet("/CatalogServlet")
 public class CatalogServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       Quiz quiz;
-       List<Question> questions ;
-       Question question;
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public CatalogServlet() {
-        super();
-        System.out.println("catServlet");
-        FilesystemLoader loader = new FilesystemLoader("/Users/TIm/Downloads/WebQuiz2015/WebContent/WEB-INF/Kataloge");
-        quiz = Quiz.getInstance();
-        quiz.initCatalogLoader(loader);
+    Quiz quiz;
+    List<Question> questions ;
+    Question question;
+ /**
+  * @see HttpServlet#HttpServlet()
+  */
+ public CatalogServlet() {
+     super();
+     System.out.println("catServlet");
+//     FilesystemLoader loader = new FilesystemLoader("/Users/derLu/WebProg/EclipseWorkspace/WebQuizSS2015/WebContent/WEB-INF/Kataloge");
+     FilesystemLoader loader = new FilesystemLoader("/Users/TIm/Downloads/WebQuiz2015/WebContent/WEB-INF/Kataloge");
+     quiz = Quiz.getInstance();
+     quiz.initCatalogLoader(loader);
 
-        try {
-			Catalog cat = (Catalog)quiz.getCatalogByName("XMLsimple.xml");
-			
-			questions= cat.getQuestions();
-			for (int i =0; i<questions.size();i++){
-//				System.out.println("Fragetext: "+ questions.get(i).getQuestion().toString());
-//				System.out.println("Timeout: " + questions.get(i).getTimeout());
-				List<String> answers;
-				for(int j =0; j<4;j++){
-					answers = questions.get(j).getAnswerList();
-				
-				}
-			}
-			
-		} catch (LoaderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        // TODO Auto-generated constructor stub
-    }
+//     try {
+//			Catalog cat = (Catalog)quiz.getCatalogByName("XMLsimple.xml");
+//			
+//			questions= cat.getQuestions();
+//			for (int i =0; i<questions.size();i++){
+////				System.out.println("Fragetext: "+ questions.get(i).getQuestion().toString());
+////				System.out.println("Timeout: " + questions.get(i).getTimeout());
+//				List<String> answers;
+//				for(int j =0; j<4;j++){
+//					answers = questions.get(j).getAnswerList();
+//				
+//				}
+//			}
+//			
+//		} catch (LoaderException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//     
+//     // TODO Auto-generated constructor stub
+}
 
-    public void init(ServletConfig config) throws ServletException {   
-    	super.init(config);
-    } 
-    
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	
-    	System.out.println("HTTP-Request");
-    
-    	Map<String, Catalog> catalogList;
-//    	JSONObject catalogs = new JSONObject();
-    	JSONArray catalogs = new JSONArray();
-    
-    			try {
+ public void init(ServletConfig config) throws ServletException {   
+ 	super.init(config);
+ } 
+ 
+ protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+ 	
+ 	System.out.println("HTTP-Request");
+ 
+ 	Map<String, Catalog> catalogList;
+// 	JSONObject catalogs = new JSONObject();
+ 	JSONArray catalogs = new JSONArray();
+ 
+ 			try {
 			catalogList = quiz.getCatalogList();
 			
 
@@ -109,12 +110,12 @@ public class CatalogServlet extends HttpServlet {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-    	
-    
-    	
-    }
-    
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	
-    }
+ 	
+ 
+ 	
+ }
+ 
+ protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+ 	
+ }
 }

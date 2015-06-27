@@ -183,8 +183,10 @@ public class FilesystemLoader implements CatalogLoader {
         @Override
         public List<Question> getQuestions(Catalog catalog)
             throws LoaderException {
-        	System.out.println("----------GETQUESTIONS------");
+        	System.out.println("----------GETQUESTIONS------"+catalog.getName());
+        	
             if (!questions.isEmpty()) {
+            	System.out.println("antworten schon befüllt");
                 return questions;
             }
             System.out.println("Katalog-Name"+catalog.getName());
@@ -196,10 +198,10 @@ public class FilesystemLoader implements CatalogLoader {
             	
             	Frage=Fragen.get(i);
             	question = new Question(Frage.getChildText("Fragetext"));
-            	System.out.println("Fragetext"+Frage.getChildText("Fragetext"));
+//            	System.out.println("Fragetext"+Frage.getChildText("Fragetext"));
             	question.setTimeout(Integer.parseInt(Frage.getAttributeValue("timeout")));
             	List<Element> answers = Frage.getChildren("Antwort");
-            	System.out.println("Antworten:"+answers.get(0).getText()+" "+answers.get(1).getText()+" "+answers.get(2).getText()+" "+answers.get(3).getText());
+//            	System.out.println("Antworten:"+answers.get(0).getText()+" "+answers.get(1).getText()+" "+answers.get(2).getText()+" "+answers.get(3).getText());
             
             	question.addAnswer(answers.get(0).getText());
             	question.addBogusAnswer(answers.get(1).getText());
@@ -207,8 +209,10 @@ public class FilesystemLoader implements CatalogLoader {
             	question.addBogusAnswer(answers.get(3).getText());
             	
             	if(question.isComplete()){
+            		System.out.println("Qestions ist Complete");
             		question.shuffleAnswers();
             		questions.add(question);
+            		System.out.println("After ADD");
             	}
             }
 
