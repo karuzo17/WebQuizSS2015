@@ -173,6 +173,9 @@ function empfange(message) {
 		var question = json.QUESTION;
 		createQuestion(question);
 	}
+	if(json.WAIT){
+		alert("Warte bis alle Spieler fertig sind");
+	}
 
 	if (json.ERROR) {
 
