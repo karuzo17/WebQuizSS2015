@@ -210,7 +210,11 @@ function empfange(message) {
 	}
 
 	if(json.RANK){
+<<<<<<< HEAD
 		alert("Du hast "+json.RANK+" erreicht");
+=======
+		console.log("Du hast "+json.RANK+" erreicht");
+>>>>>>> ServerCopy
 		//zu implementieren
 		setRankScreen();
 	}

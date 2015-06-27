@@ -2,6 +2,10 @@ package quiz;
 
 import java.util.ArrayList;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+import java.util.Collection;
+>>>>>>> ServerCopy
 =======
 import java.util.Collection;
 >>>>>>> ServerCopy
@@ -32,6 +36,7 @@ public class GameConnections {
 	public static final LinkedHashMap<Long,Session> socketliste = new LinkedHashMap<Long,Session>();  				// Vorsicht unsynchronisiert!!;
 	public static final ArrayList<Session> tmplist= new ArrayList<Session>();
 	public static final LinkedHashMap<Long,String> liste = new LinkedHashMap<Long,String>();  
+<<<<<<< HEAD
 	public static final ArrayList<Session> donePlayers =new ArrayList<Session>();
 	public static final Map<Long,Long> sortedHash = new LinkedHashMap<Long, Long>();
 	
@@ -42,6 +47,14 @@ public class GameConnections {
 	public static synchronized int getDonePlayersSize(){
 		return donePlayers.size();
 	}
+=======
+	public static final Map<Long,Long> sortedHash = new LinkedHashMap<Long, Long>();
+	public static boolean GameMode=false;
+	private static boolean isCalculated=false;
+	private static Map<Long,Integer> ranked = new HashMap<Long, Integer>();
+	
+
+>>>>>>> ServerCopy
 	public static synchronized Map<Long, Session> getMap(){
 		return socketliste;
 	}
@@ -66,6 +79,41 @@ public class GameConnections {
 				json.put("score", score);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+			}
+
+		}
+	}
+	
+	public static void calcRank(){
+		
+		Map<Long,Long> sorted =sortByValues(sortedHash);
+		int i =1;
+		for(Map.Entry<Long,Long> entry : sorted.entrySet()){
+			System.out.println("entrykey"+entry.getKey()+"Vaule"+entry.getValue());
+			ranked.put(entry.getKey(), i);
+			i++;
+		}
+	}
+	public static synchronized int getRank(Session session){
+		//rank ist noch buggy
+		if(!isCalculated){
+			calcRank();
+			isCalculated=true;
+		}
+		long id=getID(session);
+		System.out.println("ID des Spielers"+id);
+		int rank=-1;
+		for(Long key : ranked.keySet()){
+			System.out.println(ranked.get(key));
+			System.out.println("id des spielers"+id);
+			System.out.println("in for"+key);
+			if(id==key){
+				System.out.println("in if");
+				
+				rank = ranked.get(key);
+>>>>>>> ServerCopy
 			}
 
 =======
@@ -88,6 +136,10 @@ public class GameConnections {
 				rank = i ; 
 			}
 			i++;
+			
+<<<<<<< HEAD
+>>>>>>> ServerCopy
+=======
 			
 >>>>>>> ServerCopy
 		}
@@ -128,6 +180,7 @@ public class GameConnections {
 		System.out.println("---------HighScore-Update--ENde------------");
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 	public static synchronized void updateHighScoreList() throws JSONException{
 		
 		System.out.println("---------HighScore-Update-------");
@@ -161,6 +214,8 @@ public class GameConnections {
 	
 		System.out.println("---------HighScore-Update--ENde------------");
 	}
+=======
+>>>>>>> ServerCopy
 =======
 >>>>>>> ServerCopy
 	public static <K extends Comparable,V extends Comparable> Map<K,V> sortByValues(Map<K,V> map){
@@ -280,8 +335,20 @@ public class GameConnections {
     	}
     }
     public static synchronized boolean isPlayer(Session s){
-    	boolean player=socketliste.containsValue(s);
+    	long id =getID(s);
+    	boolean player=false;
     	
+    	java.util.Iterator<Entry<Long, Session>> iter = socketliste.entrySet().iterator();
+
+    	while(iter.hasNext()){
+    		Map.Entry<Long, Session> entry = iter.next();
+    		if(entry.getValue().equals(s)){
+    			player=true;
+    		}
+    	}
+    	
+    	System.out.println("containsValue"+player);
     	return player;
+    	
     }
 }

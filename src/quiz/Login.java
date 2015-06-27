@@ -70,7 +70,11 @@ public class Login {
 		System.out.println("FEHLER FEHLER FEHLER FEHLER ");
 		System.out.println("FEHLER FEHLER FEHLER FEHLER ");
 		System.out.println("GRUND" + t.getMessage());
+<<<<<<< HEAD
 		deletePlayer(session);
+=======
+//		deletePlayer(session);
+>>>>>>> ServerCopy
 //		GameConnections.getID(session);
 //		System.out.println("Fehler beim Öffnen des Sockets" + session);
 //		boolean visitor = GameConnections.isPlayer(session);
@@ -165,7 +169,11 @@ public class Login {
 		
 		JSONObject blub = new JSONObject(msg);
 		quiz=Quiz.getInstance();
+<<<<<<< HEAD
 		
+=======
+		Collection<Player> players=quiz.getPlayerList();
+>>>>>>> ServerCopy
 		if (blub.keys().next().equals("QUESTION")) {
 			System.out.println("REQUEST NEUE FrAGE");
 			String question = buildQuestion(session);
@@ -178,6 +186,7 @@ public class Login {
 				obj.put("WAIT", true);
 				session.getBasicRemote().sendText(obj.toString(), true);
 <<<<<<< HEAD
+<<<<<<< HEAD
 			
 =======
 				GameConnections.addPlayerToDonePlayers(session);
@@ -185,6 +194,22 @@ public class Login {
 					System.out.println("Alle Spieler fertig");
 					sendRanking();
 				}
+>>>>>>> ServerCopy
+=======
+				for(Player p:players){
+					if(p.getId()==GameConnections.getID(session)){
+							if(quiz.setDone(p)){
+								System.out.println("Spiel müsste Abbrechen");
+								sendRanking();
+							}
+					}
+				}
+			
+//				GameConnections.addPlayerToDonePlayers(session);
+//				if(GameConnections.getDonePlayersSize()==GameConnections.SessionCount()){
+//					System.out.println("Alle Spieler fertig");
+//					
+//				}
 >>>>>>> ServerCopy
 			} else {
 
@@ -208,7 +233,7 @@ public class Login {
 //				
 //			}
 			QuizError error = new QuizError();
-			Collection<Player> players = quiz.getPlayerList();
+			
 			Long correctIndex=(long) -1;
 			for(Player p : players){
 				if(p.getId()==GameConnections.getID(session)){
@@ -251,7 +276,7 @@ public class Login {
 
 				}
 				
-				Collection<Player> players= quiz.getPlayerList();
+				
 			
 				for(Player p: players){
 					if(p.isSuperuser()){
@@ -276,7 +301,7 @@ public class Login {
 		}
 		if(blub.keys().next().equals("GAMESTART")){
 			System.out.println("SPIEL SOLL GESTARTET WERDEN------!!!!!------");
-			Collection<Player> players = quiz.getPlayerList();
+			
 		     QuizError error = new QuizError();
 		  System.out.println("vor schleufe");
 		  game = new Game();
@@ -292,7 +317,7 @@ public class Login {
 				System.out.println("NACH schleife");
 				agent = ScoreAgent.getInstance();
 				agent.started=true;
-				
+				GameConnections.GameMode=true;
 				
 				quester=QuestHandler.getInstance();
 				
@@ -307,60 +332,65 @@ public class Login {
 		}
 		
 		if(blub.keys().next().equals("NEWPLAYER")){
-			System.out.println("NewPlayer detected");
-			quiz=Quiz.getInstance();
-			handler = CatalogHandler.getInstance();
-			if(quiz.getCurrentCatalog()!=null){
-				System.out.println("CATALOG schon gesetzt : "+ tmpCatalog);
+			quiz = Quiz.getInstance();
+			if (quiz.getPlayerList().size() >= 6) {
 				JSONObject j = new JSONObject();
-				j.put("CATALOG", handler.getCatalogName());
+				j.put("ERROR", "Maximal_Zahl_Spieler_erreicht");
 				session.getBasicRemote().sendText(j.toString());
-	
+
+			} else {
+				System.out.println("NewPlayer detected");
+				quiz = Quiz.getInstance();
+				handler = CatalogHandler.getInstance();
+				if (quiz.getCurrentCatalog() != null) {
+					System.out.println("CATALOG schon gesetzt : " + tmpCatalog);
+					JSONObject j = new JSONObject();
+					j.put("CATALOG", handler.getCatalogName());
+					session.getBasicRemote().sendText(j.toString());
+
+				}
+
+				QuizError error = new QuizError();
+				Player player = quiz.createPlayer(blub.getString("NEWPLAYER"),
+						error);
+				System.out.println(player.getName());
+				JSONObject obj = new JSONObject();
+				obj.put("username", player.getName());
+				obj.put("score", player.getScore());
+				obj.put("id", player.getId());
+				GameConnections.addJSONObject(obj);
+
+				GameConnections.addSession(session, player.getId());
+
+				if (player.getId() == 0) {
+					JSONObject j = new JSONObject();
+					j.put("LEADER", true);
+					try {
+						session.getBasicRemote().sendText(j.toString());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+				ScoreAgent agent = ScoreAgent.getInstance();
+				if (!agent.isAlive()) {
+					agent.start();
+				} else {
+
+					synchronized (agent) {
+						agent.restart();
+					}
+				}
+
+				if (!handler.isAlive()) {
+					System.out.println("Handler lebt nicht ");
+					// handler.setName(blub.getString("CATALOG"));
+					handler.start();
+
+				}
+
 			}
-
-		
-		
-		QuizError error = new QuizError();
-		Player player=quiz.createPlayer(blub.getString("NEWPLAYER"), error);
-		System.out.println(player.getName());
-		JSONObject obj = new JSONObject();
-		obj.put("username",player.getName());
-		obj.put("score", player.getScore());	
-		obj.put("id", player.getId());
-		GameConnections.addJSONObject(obj);
-
-		GameConnections.addSession(session, player.getId());
-		
-		if(player.getId()==0){
-			JSONObject j = new JSONObject();
-			j.put("LEADER", true);
-			try {
-				session.getBasicRemote().sendText(j.toString());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		
-		
-		ScoreAgent agent= ScoreAgent.getInstance();
-		if(!agent.isAlive()){
-			agent.start();
-		}else{
-			
-			synchronized (agent) {
-				agent.restart();
-			}
-		}
-		
-		if(!handler.isAlive()){		
-			System.out.println("Handler lebt nicht ");
-			//			handler.setName(blub.getString("CATALOG"));
-			handler.start();
-
-		}
-	
 		}
     }
 	
@@ -419,10 +449,18 @@ public class Login {
 	//----SPIELER LÖSCHEN 
 	public void deletePlayer(Session session) throws JSONException{
 		System.out.println("-----DELETE-PLAYER------DELETE-PLAYER------");
+<<<<<<< HEAD
 		GameConnections.getID(session);
 		System.out.println("Fehler beim Öffnen des Sockets" + session);
 		boolean visitor = GameConnections.isPlayer(session);
 		System.out.println("on error flag " + visitor);
+=======
+//		GameConnections.getID(session);
+		System.out.println("Fehler beim Öffnen des Sockets" + session);
+		boolean visitor = GameConnections.isPlayer(session);
+		System.out.println("on error flag " + visitor);
+		System.out.println("ISt es ein Spieler?"+GameConnections.isPlayer(session));
+>>>>>>> ServerCopy
 		if (!GameConnections.isPlayer(session)) {
 			System.out.println("Besucher gelöscht");
 			GameConnections.SessionTMPRemove(session);
@@ -436,7 +474,15 @@ public class Login {
 				}
 			}
 
+<<<<<<< HEAD
 		} else {
+=======
+		} 
+		else if(GameConnections.isPlayer(session)&&!GameConnections.GameMode){
+			System.out.println("Spieler kein Besucher und Spiel noch nicht gestartet ");
+		}
+		else {
+>>>>>>> ServerCopy
 			System.out.println("Spieler gelöscht");
 			long id = GameConnections.getID(session);
 			System.out.println("ID des Spielers" + id);
@@ -449,9 +495,20 @@ public class Login {
 			Collection<Player> players = quiz.getPlayerList();
 			QuizError error = new QuizError();
 			for (Player p : players) {
+<<<<<<< HEAD
 				if (p.getId() == id) {
 					System.out.println("SPieler gelöscht");
 					quiz.removePlayer(p, error);
+=======
+				System.out.println("Player schleife");
+				if (p.getId() == id) {
+					System.out.println("SPieler gelöscht");
+					boolean reset = quiz.removePlayer(p, error);
+					System.out.println("Reset"+reset);
+					if(reset){
+						System.out.println("-----RESET-------RESET-------RESET-----RESET");
+					}
+>>>>>>> ServerCopy
 				}
 			}
 
@@ -471,7 +528,10 @@ public class Login {
 		}
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> ServerCopy
 	
 	public void sendRanking(){
 		agent.gameover=true;
@@ -480,5 +540,8 @@ public class Login {
 			agent.restart();
 		}
 	}
+<<<<<<< HEAD
+>>>>>>> ServerCopy
+=======
 >>>>>>> ServerCopy
 }
