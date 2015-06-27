@@ -31,6 +31,9 @@ public class GameConnections {
 	public static final LinkedHashMap<Long,String> liste = new LinkedHashMap<Long,String>();  
 	public static final ArrayList<Session> donePlayers =new ArrayList<Session>();
 	public static final Map<Long,Long> sortedHash = new LinkedHashMap<Long, Long>();
+
+	private static boolean isCalculated=false;
+	private static Map<Long,Integer> ranked = new HashMap<Long, Integer>();
 	
 	
 	public static synchronized void addPlayerToDonePlayers(Session value){
@@ -66,21 +69,36 @@ public class GameConnections {
 
 		}
 	}
+	
+	public static void calcRank(){
+		
+		Map<Long,Long> sorted =sortByValues(sortedHash);
+		int i =1;
+		for(Map.Entry<Long,Long> entry : sorted.entrySet()){
+			System.out.println("entrykey"+entry.getKey()+"Vaule"+entry.getValue());
+			ranked.put(entry.getKey(), i);
+			i++;
+		}
+	}
 	public static synchronized int getRank(Session session){
 		//rank ist noch buggy
+		if(!isCalculated){
+			calcRank();
+			isCalculated=true;
+		}
 		long id=getID(session);
 		System.out.println("ID des Spielers"+id);
-		int rank =-1 ; 
-		int i=1;
-		for(Long key : sortedHash.keySet()){
-
-			System.out.println("in for");
+		int rank=-1;
+		for(Long key : ranked.keySet()){
+			System.out.println(ranked.get(key));
+			System.out.println("id des spielers"+id);
+			System.out.println("in for"+key);
 			if(id==key){
 				System.out.println("in if");
-				System.out.println("RANK des Spielers " +i);
-				rank = i ; 
+				
+				rank = ranked.get(key);
 			}
-			i++;
+			
 			
 		}
 		return rank;
