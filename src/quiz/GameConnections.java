@@ -67,7 +67,7 @@ public class GameConnections {
 		}
 	}
 	public static synchronized int getRank(Session session){
-		
+		//rank ist noch buggy
 		long id=getID(session);
 		System.out.println("ID des Spielers"+id);
 		int rank =-1 ; 
