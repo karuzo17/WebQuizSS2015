@@ -29,19 +29,12 @@ public class GameConnections {
 	public static final LinkedHashMap<Long,Session> socketliste = new LinkedHashMap<Long,Session>();  				// Vorsicht unsynchronisiert!!;
 	public static final ArrayList<Session> tmplist= new ArrayList<Session>();
 	public static final LinkedHashMap<Long,String> liste = new LinkedHashMap<Long,String>();  
-	public static final ArrayList<Session> donePlayers =new ArrayList<Session>();
 	public static final Map<Long,Long> sortedHash = new LinkedHashMap<Long, Long>();
-
+	public static boolean GameMode=false;
 	private static boolean isCalculated=false;
 	private static Map<Long,Integer> ranked = new HashMap<Long, Integer>();
 	
-	
-	public static synchronized void addPlayerToDonePlayers(Session value){
-		donePlayers.add(value);
-	}
-	public static synchronized int getDonePlayersSize(){
-		return donePlayers.size();
-	}
+
 	public static synchronized Map<Long, Session> getMap(){
 		return socketliste;
 	}
@@ -254,8 +247,20 @@ public class GameConnections {
     	}
     }
     public static synchronized boolean isPlayer(Session s){
-    	boolean player=socketliste.containsValue(s);
+    	long id =getID(s);
+    	boolean player=false;
     	
+    	java.util.Iterator<Entry<Long, Session>> iter = socketliste.entrySet().iterator();
+
+    	while(iter.hasNext()){
+    		Map.Entry<Long, Session> entry = iter.next();
+    		if(entry.getValue().equals(s)){
+    			player=true;
+    		}
+    	}
+    	
+    	System.out.println("containsValue"+player);
     	return player;
+    	
     }
 }
