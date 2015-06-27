@@ -121,9 +121,8 @@ function empfange(message) {
 	var text = message.data;
 	var json = JSON.parse(text);
 //	console.log(json);
-	if(typeof json ==json.RESPONSE){
-		console.log("de puta ");
-	}
+
+
 	if (json.CATALOG) {
 
 		console.log("Hab katalog bekommen");
@@ -174,6 +173,9 @@ function empfange(message) {
 		var question = json.QUESTION;
 		createQuestion(question);
 	}
+	if(json.WAIT){
+		alert("Warte bis alle Spieler fertig sind");
+	}
 
 	if (json.ERROR) {
 
@@ -183,7 +185,7 @@ function empfange(message) {
 	if (json.RESPONSE) {
 		
 		console.log("Hab die Antwort erhalten");
-		var correctAnswer = json.RESPONSE;
+		var correctAnswer = json.RESPONSE[0];
 		
 		setAnswerBackground(correctAnswer);
 		console.log("korrekte Antwort"+correctAnswer);
