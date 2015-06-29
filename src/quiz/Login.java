@@ -150,7 +150,7 @@ public class Login {
 		
 
 		JSONObject json = new JSONObject();
-		json.put("PLAYERLIST",GameConnections.getInstance());
+		json.put("PLAYERLIST",GameScores.getInstance());
 		String msg = json.toString();
 		
 		
@@ -228,8 +228,8 @@ public class Login {
 					if(blub.getLong("RESPONSE")==correctIndex){
 						System.out.println("new Score:"+p.getScore());
 						agent = ScoreAgent.getInstance();
-						GameConnections.updateJSONScore(playerid,p.getScore());
-						GameConnections.updateHighScoreList();
+						GameScores.updateJSONScore(playerid,p.getScore());
+						GameScores.updateHighScoreList();
 						synchronized (agent) {
 								agent.restart();
 						}
@@ -338,7 +338,7 @@ public class Login {
 				obj.put("username", player.getName());
 				obj.put("score", player.getScore());
 				obj.put("id", player.getId());
-				GameConnections.addJSONObject(obj);
+				GameScores.addJSONObject(obj);
 
 				GameConnections.addSession(session, player.getId());
 
@@ -457,8 +457,8 @@ public class Login {
 			System.out.println("ID des Spielers" + id);
 			GameConnections.IDRemove(id);
 			JSONObject obj = new JSONObject();
-			System.out.println("ARRRAYJSON" + GameConnections.getInstance());
-			GameConnections.removeJSONObject(id);
+//			System.out.println("ARRRAYJSON" + GameConnections.getInstance());
+			GameScores.removeJSONObject(id);
 
 			quiz = Quiz.getInstance();
 			Collection<Player> players = quiz.getPlayerList();
@@ -468,16 +468,17 @@ public class Login {
 				if (p.getId() == id) {
 					System.out.println("SPieler gelöscht");
 					quiz.removePlayer(p, error);
-					GameConnections.removeID(p.getId());
+				
 					if(error.isSet()){
 						System.out.println(error.getDescription());
 						System.out.println("-----RESET-------RESET-------RESET-----RESET");
+						
 					}
 					
 				}
 			}
 
-			System.out.println("new array " + GameConnections.getInstance());
+//			System.out.println("new array " + GameConnections.getInstance());
 
 			ScoreAgent agent = ScoreAgent.getInstance();
 			// agent.start();
@@ -500,4 +501,9 @@ public class Login {
 			agent.restart();
 		}
 	}
+	
+//	public void resetGame(){
+//		
+//		GameConnections.array
+//	}
 }

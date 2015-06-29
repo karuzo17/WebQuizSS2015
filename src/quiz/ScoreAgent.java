@@ -54,17 +54,17 @@ public class ScoreAgent extends Thread{
 							.println("----ScoreAgent--------ScoreAgent--------");
 					JSONObject json = new JSONObject();
 					try {
-						json.put("PLAYERLIST", GameConnections.getInstance());
+						json.put("PLAYERLIST", GameScores.getInstance());
 					} catch (JSONException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					String msg = json.toString();
 					// System.out.println("SessionCount"+GameConnections.SessionCount());
-					System.out.println("GAMEConnections"
-							+ GameConnections.outputAllSessions());
-					System.out.println("TMP-Connections"
-							+ GameConnections.outputAllTMPSessions());
+//					System.out.println("GAMEConnections"
+//							+ GameConnections.outputAllSessions());
+//					System.out.println("TMP-Connections"
+//							+ GameConnections.outputAllTMPSessions());
 
 					Map<Long, Session> map = GameConnections.getMap();
 
@@ -123,7 +123,7 @@ public class ScoreAgent extends Thread{
 						System.out.println("map and key" + map.get(key));
 						Session s = map.get(key);
 						JSONObject obj = new JSONObject();
-						int rank = GameConnections.getRank(s);
+						int rank = GameScores.getRank(s);
 						try {
 							obj.put("RANK",rank );
 						} catch (JSONException e1) {
