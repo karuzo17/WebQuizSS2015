@@ -30,6 +30,7 @@ public class GameConnections {
 
 	public static final Map<Long,Long> sortedHash = new LinkedHashMap<Long, Long>();
 	public static boolean GameMode=false;
+	public static int GameOverCount=1;
 
 	public static synchronized void resetConnections(){
 

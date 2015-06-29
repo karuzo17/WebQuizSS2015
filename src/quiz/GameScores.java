@@ -114,6 +114,7 @@ public class GameScores {
 			sorted.put(json);
 		}
 		ids.clear();
+		tmpHash.clear();
 		tmpHash.putAll(sortedHash);
 		sortedHash.clear();
 		array=sorted;
