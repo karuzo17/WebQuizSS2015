@@ -1,29 +1,25 @@
 document.addEventListener('DOMContentLoaded', initLogin, false);
-window.onbeforeunload=tabClose;
+window.onbeforeunload = tabClose;
 var socket;
-var bereitZumSenden = false;
-var firstPlayer = false;
-var tmpCat = false;
+var bereitZumSenden;
+var firstPlayer;
+var tmpCat;
 var animation;
 var timer;
 var question;
 var sendAnswer;
-var firstQuestion = true;
-var waitingForResponse = false;
+var firstQuestion;
+var waitingForResponse;
+var nameOfPlayer;
 
-// Dieser Text ist nur zum Pushen da
-// Dieser Text ist nur zum Pushen da
-// Dieser Text ist nur zum Pushen da
-// Dieser Text ist nur zum Pushen da
-// Dieser Text ist nur zum Pushen da
-// Dieser Text ist nur zum Pushen da
-
-function initLogin() { // Listener registrieren fÃ¼r Buttons
-
-	startNewGame();
+function initLogin() {
 
 	initPlayerTable();
+	defaultSettings();
+	setConnection();
+}
 
+function setConnection(){
 	var url = 'ws://localhost:8080/WebQuizSS15/Login';
 
 	socket = new WebSocket(url);
@@ -34,9 +30,27 @@ function initLogin() { // Listener registrieren fÃ¼r Buttons
 	socket.onmessage = empfange;
 }
 
-function startNewGame() {
+function defaultSettings() {
+	
+	bereitZumSenden = false;
+	firstPlayer = false;
+	tmpCat = false;
+	firstQuestion = true;
+	waitingForResponse = false;
+	
+	for (var i = 0; i < 6; i++) {
+		document.getElementById("playerCol" + i).innerHTML = "-";
+		document.getElementById("scoreCol" + i).innerHTML = 0;
+		document.getElementById("rows" + i).style.background = "Whitesmoke";
+	}
+
+	var catalogsTMP = document.getElementsByClassName("catalogDiv");
+	for (var j = 0; j < catalogsTMP.length; j++) {
+		document.getElementById("catalog" + j).style.background = "Whitesmoke";
+	}
 
 	var main = document.getElementById("main");
+	document.getElementById("main").innerHTML = "";
 
 	var loginForm = document.createElement("div");
 	loginForm.id = "loginForm";
@@ -54,13 +68,13 @@ function startNewGame() {
 	userName.name = "userName";
 	userName.id = "userName";
 
-	loginForm.appendChild(loginButton);
 	loginForm.appendChild(userName);
-
+	loginForm.appendChild(loginButton);
 }
 
-// Listener fÃ¼r den Button go
+
 function send(event) {
+	
 	var button = event.target;
 	var outmessage = window.document.getElementById("userName").value;
 	var nameUsed = false;
@@ -79,8 +93,9 @@ function send(event) {
 		var newPlayer = JSON.stringify({
 			"NEWPLAYER" : outmessage
 		});
-		var string = newPlayer;
-		var obj = JSON.parse(string);
+		// var string = newPlayer;
+		// var obj = JSON.parse(string);
+		nameOfPlayer = outmessage;
 
 		if (bereitZumSenden == true) {
 			socket.send(newPlayer);
@@ -91,37 +106,30 @@ function send(event) {
 }
 
 function sendenMoeglich() {
+	
 	bereitZumSenden = true;
 	console.log("Senden ist möglich");
 }
 
 function ErrorHandler(event) {
-	alert("Fehler bei den Websockets " + event.data);
+	
 }
 
 function Closing(event) {
 
-	
 }
-function tabClose(event){
+
+function tabClose(event) {
 	var string = JSON.stringify({
 		"LOGOUT" : true
 	});
 	socket.send(string);
 }
 
-/**
- * @param message
- */
-/**
- * @param message
- */
 function empfange(message) {
 
 	var text = message.data;
 	var json = JSON.parse(text);
-//	console.log(json);
-
 
 	if (json.CATALOG) {
 
@@ -134,10 +142,17 @@ function empfange(message) {
 	}
 
 	if (json.PLAYERLIST) {
-
+		
+		console.log("PlayerListLength: " + json.PLAYERLIST.length);
 		var playerTable = document.getElementById("playerTable");
 
 		for (var i = 0; i < 6; i++) {
+
+			if (json.PLAYERLIST[i].username == nameOfPlayer) {
+				document.getElementById("rows" + i).style.background = "#7C907A";
+			} else {
+				document.getElementById("rows" + i).style.background = "Whitesmoke";
+			}
 
 			if (i < json.PLAYERLIST.length) {
 				document.getElementById("playerCol" + i).innerHTML = json.PLAYERLIST[i].username;
@@ -173,80 +188,68 @@ function empfange(message) {
 		var question = json.QUESTION;
 		createQuestion(question);
 	}
-	if(json.WAIT){
-		alert("Warte bis alle Spieler fertig sind");
+
+	if (json.WAIT) {
+		
+		setMainTextWait();
 	}
 
 	if (json.ERROR) {
 
-		alert("Got error:");
+		alert("Got error: " + json.ERROR);
 	}
 
 	if (json.RESPONSE) {
-		
+
 		console.log("Hab die Antwort erhalten");
-		var correctAnswer = json.RESPONSE[0];
-		
+		var correctAnswer = json.RESPONSE;
+
 		setAnswerBackground(correctAnswer);
-<<<<<<< HEAD
 
-=======
-		console.log("korrekte Antwort"+correctAnswer);
-		console.log("gewähöte Antwort"+sendAnswer);
->>>>>>> ServerCopy
-		setTimeout(function() {
-			waitingForResponse = false;
-			var question = JSON.stringify({
-				"QUESTION" : true
-			});
-			socket.send(question);
-			
-		}, 3000);
-	}
-	
-	if(json.GAMEOVER){
-		//zu implementieren
-		createGameoverScreen();
+		console.log("korrekte Antwort" + correctAnswer);
+		console.log("gewähöte Antwort" + sendAnswer);
+
+		setTimeout(sendResponse, 3000);
 	}
 
-	if(json.RANK){
-<<<<<<< HEAD
-		alert("Du hast "+json.RANK+" erreicht");
-=======
-		console.log("Du hast "+json.RANK+" erreicht");
->>>>>>> ServerCopy
-		//zu implementieren
-		setRankScreen();
+	if (json.GAMEOVER) {
+		defaultSettings();
 	}
 
-	if(json.ERROR){
+	if (json.RANK) {
+		var rank = json.RANK;
+		setMainTextRank(rank);
+		
+		//default settings zum Test
+		//defaultSettings();
+	}
 
-		//zu implementieren
-		alert(json.ERROR);
+	if (json.NEWGAME) {
+
+		defaultSettings();
 	}
 }
 
+function sendResponse() {
+
+	waitingForResponse = false;
+	var question = JSON.stringify({
+		"QUESTION" : true
+	});
+	socket.send(question);
+}
+
 function setAnswerBackground(correctA) {
-	
-<<<<<<< HEAD
-	alert("drin!");
-=======
+
 	console.log("answer background");
-//	alert("drin!");
->>>>>>> ServerCopy
 
 	var cols = document.getElementsByClassName("cols");
 
-	if(sendAnswer === correctA){
+	if (sendAnswer === correctA) {
 		document.getElementById("answer" + correctA).style.background = "#BEF781";
-<<<<<<< HEAD
-=======
-	} 
-	else if(sendAnswer === 4){
-//		alert("deine mom stinkt");
+	} else if (sendAnswer === 4) {
 		document.getElementById("answer" + correctA).style.background = "#BEF781";
->>>>>>> ServerCopy
-	}else{
+	} else {
 		document.getElementById("answer" + sendAnswer).style.background = "#F78181";
 		document.getElementById("answer" + correctA).style.background = "#BEF781";
 	}
@@ -362,10 +365,9 @@ function initTimer() {
 }
 
 function countTime() {
-	
 
 	var questionText = document.getElementById("questionText");
-	
+
 	timer = timer - 1;
 	if (timer == 0) {
 		questionText.innerHTML = question + "<br /><br /><br />"
@@ -375,8 +377,8 @@ function countTime() {
 			"RESPONSE" : 4
 		});
 		sendAnswer = 4;
-		console.log("sendAnswer"+sendAnswer);
-		waitingForResponse=true;
+		console.log("sendAnswer" + sendAnswer);
+		waitingForResponse = true;
 		socket.send(response);
 	} else {
 		questionText.innerHTML = question + "<br /><br /><br />"
@@ -401,7 +403,7 @@ function answerClicked(event) {
 				waitingForResponse = true;
 			}
 		}
-	} 
+	}
 }
 
 function initPlayerTable() {
@@ -409,12 +411,14 @@ function initPlayerTable() {
 	var playersDiv = document.getElementById("players");
 	var playerTable = document.createElement("table");
 	playerTable.id = "playerTable";
+	playerTable.setAttribute("width", "90%");
 
 	for (var i = 0; i < 6; i++) {
 
 		var tableRow = playerTable.insertRow();
-		for (var j = 0; j < 3; j++) {
+		tableRow.id = "rows" + i;
 
+		for (var j = 0; j < 3; j++) {
 			var tableCell = tableRow.insertCell();
 			if (j === 0) {
 				tableCell.innerHTML = i + 1 + ".";
@@ -423,13 +427,29 @@ function initPlayerTable() {
 				tableCell.id = "playerCol" + i;
 				tableCell.innerHTML = "-";
 				tableCell.className = "playerCol";
-				tableCell.setAttribute("width", "55%");
 			} else {
 				tableCell.id = "scoreCol" + i;
+				tableCell.className = "scoreCol";
 				tableCell.innerHTML = "-";
-				tableCell.setAttribute("width", "25%");
 			}
 		}
 	}
 	playersDiv.appendChild(playerTable);
+}
+
+function setMainTextWait() {
+	cleanMain();
+	var waitText = document.createElement("div");
+	waitText.id = "texts";
+	waitText.innerHTML = "GAME OVER! Please wait for the Final result!";
+	document.getElementById("main").appendChild(waitText);
+}
+
+function setMainTextRank(rank) {
+	cleanMain();
+	var rankText = document.createElement("div");
+	rankText.id = "texts";
+	rankText.innerHTML = "You finished on rank " + rank
+			+ "! Congrats and thanks for playing! :)";
+	document.getElementById("main").appendChild(rankText);
 }

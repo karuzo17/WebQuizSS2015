@@ -1,14 +1,6 @@
 package quiz;
 
 import java.util.ArrayList;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import java.util.Collection;
->>>>>>> ServerCopy
-=======
-import java.util.Collection;
->>>>>>> ServerCopy
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -36,7 +28,7 @@ public class GameConnections {
 	public static final LinkedHashMap<Long,Session> socketliste = new LinkedHashMap<Long,Session>();  				// Vorsicht unsynchronisiert!!;
 	public static final ArrayList<Session> tmplist= new ArrayList<Session>();
 	public static final LinkedHashMap<Long,String> liste = new LinkedHashMap<Long,String>();  
-<<<<<<< HEAD
+
 	public static final ArrayList<Session> donePlayers =new ArrayList<Session>();
 	public static final Map<Long,Long> sortedHash = new LinkedHashMap<Long, Long>();
 	
@@ -47,14 +39,13 @@ public class GameConnections {
 	public static synchronized int getDonePlayersSize(){
 		return donePlayers.size();
 	}
-=======
-	public static final Map<Long,Long> sortedHash = new LinkedHashMap<Long, Long>();
+
 	public static boolean GameMode=false;
 	private static boolean isCalculated=false;
 	private static Map<Long,Integer> ranked = new HashMap<Long, Integer>();
 	
 
->>>>>>> ServerCopy
+
 	public static synchronized Map<Long, Session> getMap(){
 		return socketliste;
 	}
@@ -77,12 +68,7 @@ public class GameConnections {
 			JSONObject json = array.getJSONObject(i);
 			if (json.getLong("id") == id) {
 				json.put("score", score);
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 			}
-
 		}
 	}
 	
@@ -96,31 +82,7 @@ public class GameConnections {
 			i++;
 		}
 	}
-	public static synchronized int getRank(Session session){
-		//rank ist noch buggy
-		if(!isCalculated){
-			calcRank();
-			isCalculated=true;
-		}
-		long id=getID(session);
-		System.out.println("ID des Spielers"+id);
-		int rank=-1;
-		for(Long key : ranked.keySet()){
-			System.out.println(ranked.get(key));
-			System.out.println("id des spielers"+id);
-			System.out.println("in for"+key);
-			if(id==key){
-				System.out.println("in if");
-				
-				rank = ranked.get(key);
->>>>>>> ServerCopy
-			}
 
-=======
-			}
-
-		}
-	}
 	public static synchronized int getRank(Session session){
 		
 		long id=getID(session);
@@ -136,51 +98,10 @@ public class GameConnections {
 				rank = i ; 
 			}
 			i++;
-			
-<<<<<<< HEAD
->>>>>>> ServerCopy
-=======
-			
->>>>>>> ServerCopy
 		}
-		return rank;
-		
+		return rank;		
 	}
-	public static synchronized void updateHighScoreList() throws JSONException{
-		
-		System.out.println("---------HighScore-Update-------");
-		JSONArray arj = array;
-		
-		Map<Long,String> names = new LinkedHashMap<Long, String>();
-		JSONArray sorted = new JSONArray();
-		System.out.println("ARRAYJSON"+arj);
-		for (int i = 0; i < arj.length(); i++) {
-			JSONObject obj1 = arj.getJSONObject(i);
-			long score1 = (Long) obj1.get("score");
-			long id1 = (Long) obj1.get("id");
-			sortedHash.put(id1,score1 );
-			String name1 = (String) obj1.get("username");
-			names.put(id1, name1);
-		}
-		Map<Long,Long> sortie =sortByValues(sortedHash);
-
-		System.out.println("IDS-SIUZE"+ids.size());
-		for(int k=0; k<ids.size();k++){
-			JSONObject json = new JSONObject();
-			long  id=ids.get(k);
-			json.put("username",names.get(id));
-			json.put("score", sortie.get(id));	
-			json.put("id", id);
-			sorted.put(json);
-		}
-		ids.clear();
-
-		array=sorted;
 	
-		System.out.println("---------HighScore-Update--ENde------------");
-	}
-<<<<<<< HEAD
-<<<<<<< HEAD
 	public static synchronized void updateHighScoreList() throws JSONException{
 		
 		System.out.println("---------HighScore-Update-------");
@@ -214,10 +135,7 @@ public class GameConnections {
 	
 		System.out.println("---------HighScore-Update--ENde------------");
 	}
-=======
->>>>>>> ServerCopy
-=======
->>>>>>> ServerCopy
+
 	public static <K extends Comparable,V extends Comparable> Map<K,V> sortByValues(Map<K,V> map){
         List<Map.Entry<K,V>> entries = new LinkedList<Map.Entry<K,V>>(map.entrySet());
       
