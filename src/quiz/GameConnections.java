@@ -1,5 +1,6 @@
 package quiz;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,18 +25,24 @@ import de.fhwgt.quiz.application.Player;
 
 public class GameConnections {
 
-	public static  JSONArray array = new JSONArray();
-	public static ArrayList<Long> ids = new ArrayList<Long>();
 	public static final LinkedHashMap<Long,Session> socketliste = new LinkedHashMap<Long,Session>();  				// Vorsicht unsynchronisiert!!;
 	public static final ArrayList<Session> tmplist= new ArrayList<Session>();
 
 	public static final Map<Long,Long> sortedHash = new LinkedHashMap<Long, Long>();
 	public static boolean GameMode=false;
-	private static boolean isCalculated=false;
-	private static Map<Long,Integer> ranked = new HashMap<Long, Integer>();
+
+	public static synchronized void resetConnections(){
+
+		for (Long key : socketliste.keySet()) {
+			System.out.println("map and key" + socketliste.get(key));
+			Session s = socketliste.get(key);
+			tmplist.add(s);
+		}
+		System.out.println("Verbindungen in TMP verschoben ");
+		socketliste.clear();
+		System.out.println("alte Verbindungen gelöscht ");
+	}
 	
-
-
 	public static synchronized Map<Long, Session> getMap(){
 		return socketliste;
 	}

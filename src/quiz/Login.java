@@ -473,6 +473,8 @@ public class Login {
 						System.out.println(error.getDescription());
 						System.out.println("-----RESET-------RESET-------RESET-----RESET");
 						
+						resetGame();
+						
 					}
 					
 				}
@@ -502,8 +504,10 @@ public class Login {
 		}
 	}
 	
-//	public void resetGame(){
-//		
-//		GameConnections.array
-//	}
+	public void resetGame(){
+		
+		GameConnections.resetConnections();
+		GameScores.resetScore();
+	
+	}
 }

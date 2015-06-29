@@ -26,7 +26,7 @@ public class ScoreAgent extends Thread{
 	public void run() {
 		System.out.println("Thread gestartet ");
 
-		while (true) {
+		while (!gameover) {
 
 			System.out.println("ICH laufe ");
 			synchronized (this) { // Instanz von
@@ -116,32 +116,34 @@ public class ScoreAgent extends Thread{
 					System.out.println("Thread fertig");
 				}
 				
-				if(gameover){
-					Map<Long, Session> map = GameConnections.getMap();
-
-					for (Long key : map.keySet()) {
-						System.out.println("map and key" + map.get(key));
-						Session s = map.get(key);
-						JSONObject obj = new JSONObject();
-						int rank = GameScores.getRank(s);
-						try {
-							obj.put("RANK",rank );
-						} catch (JSONException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						try {
-							s.getBasicRemote().sendText(obj.toString());
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}
+				
 
 			}
 		}
 		// }
+		
+		if(gameover){
+			Map<Long, Session> map = GameConnections.getMap();
+			System.out.println("Sending Ranks");
+			for (Long key : map.keySet()) {
+				System.out.println("map and key" + map.get(key));
+				Session s = map.get(key);
+				JSONObject obj = new JSONObject();
+				int rank = GameScores.getRank(s);
+				try {
+					obj.put("RANK",rank );
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
+					s.getBasicRemote().sendText(obj.toString());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 		
 	}
 	

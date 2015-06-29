@@ -21,6 +21,7 @@ public class GameScores {
 	public static  JSONArray array = new JSONArray();
 	public static ArrayList<Long> ids = new ArrayList<Long>();
 	public static final Map<Long,Long> sortedHash = new LinkedHashMap<Long, Long>();
+	public static Map<Long,Long> tmpHash = new LinkedHashMap<Long, Long>();
 	private static Map<Long,Integer> ranked = new HashMap<Long, Integer>();
 	private static boolean isCalculated=false;
 	
@@ -28,6 +29,15 @@ public class GameScores {
 		System.out.println("gameJSON"+array);
 		array.put(obj);
 //		System.out.println("gameJSON danach"+array);
+	}
+	public static synchronized void resetScore(){
+		array = null;
+		System.out.println("Array nach reset"+array);
+		
+		ranked.clear();
+		System.out.println("Ranked Cleared");
+		
+		isCalculated=false;
 	}
 
 	public static synchronized void updateJSONScore(long id, long score)
@@ -43,8 +53,7 @@ public class GameScores {
 	}
 	
 	public static void calcRank(){
-		
-		Map<Long,Long> sorted =sortByValues(sortedHash);
+		Map<Long,Long> sorted =sortByValues(tmpHash);
 		int i =1;
 		for(Map.Entry<Long,Long> entry : sorted.entrySet()){
 			System.out.println("entrykey"+entry.getKey()+"Vaule"+entry.getValue());
@@ -93,7 +102,6 @@ public class GameScores {
 			String name1 = (String) obj1.get("username");
 			names.put(id1, name1);
 		}
-		System.out.println("SORTED-HASH-SIZE"+sortedHash.size());
 		Map<Long,Long> sortie =sortByValues(sortedHash);
 
 		System.out.println("IDS-SIUZE"+ids.size());
@@ -106,6 +114,7 @@ public class GameScores {
 			sorted.put(json);
 		}
 		ids.clear();
+		tmpHash.putAll(sortedHash);
 		sortedHash.clear();
 		array=sorted;
 	
