@@ -34,6 +34,18 @@ public class GameConnections {
 	private static boolean isCalculated=false;
 	private static Map<Long,Integer> ranked = new HashMap<Long, Integer>();
 	
+	public  static synchronized void removeID(long id){
+		int i=0;
+		for(long l: ids){
+			if(id==l){
+				System.out.println("Index des zu Löschenden Objekts"+i);
+			}
+			i++;
+		}
+		
+		
+		System.out.println("IDS nach remove"+ids.size());
+	} 
 
 	public static synchronized Map<Long, Session> getMap(){
 		return socketliste;
@@ -105,6 +117,7 @@ public class GameConnections {
 		Map<Long,String> names = new LinkedHashMap<Long, String>();
 		JSONArray sorted = new JSONArray();
 		System.out.println("ARRAYJSON"+arj);
+		System.out.println("REAL Array"+array);
 		for (int i = 0; i < arj.length(); i++) {
 			JSONObject obj1 = arj.getJSONObject(i);
 			long score1 = (Long) obj1.get("score");
@@ -113,6 +126,7 @@ public class GameConnections {
 			String name1 = (String) obj1.get("username");
 			names.put(id1, name1);
 		}
+		System.out.println("SORTED-HASH-SIZE"+sortedHash.size());
 		Map<Long,Long> sortie =sortByValues(sortedHash);
 
 		System.out.println("IDS-SIUZE"+ids.size());
@@ -125,7 +139,7 @@ public class GameConnections {
 			sorted.put(json);
 		}
 		ids.clear();
-
+		sortedHash.clear();
 		array=sorted;
 	
 		System.out.println("---------HighScore-Update--ENde------------");

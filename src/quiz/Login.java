@@ -452,7 +452,7 @@ public class Login {
 			System.out.println("Spieler kein Besucher und Spiel noch nicht gestartet ");
 		}
 		else {
-			System.out.println("Spieler gelöscht");
+		
 			long id = GameConnections.getID(session);
 			System.out.println("ID des Spielers" + id);
 			GameConnections.IDRemove(id);
@@ -467,11 +467,13 @@ public class Login {
 				System.out.println("Player schleife");
 				if (p.getId() == id) {
 					System.out.println("SPieler gelöscht");
-					boolean reset = quiz.removePlayer(p, error);
-					System.out.println("Reset"+reset);
-					if(reset){
+					quiz.removePlayer(p, error);
+					GameConnections.removeID(p.getId());
+					if(error.isSet()){
+						System.out.println(error.getDescription());
 						System.out.println("-----RESET-------RESET-------RESET-----RESET");
 					}
+					
 				}
 			}
 

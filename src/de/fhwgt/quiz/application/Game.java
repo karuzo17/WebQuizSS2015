@@ -206,7 +206,7 @@ public class Game {
 
         // Stop possible timer
         player.stopTimeout();
-
+        System.out.println("Spieler mit ID:"+player.getId()+" hat das Spiel verlassen");
         if (players.remove(player.getName()) == null) {
             // User did not exist
             return false;
@@ -251,7 +251,8 @@ public class Game {
      * @return <code>true</code> if game is over; else <code>false</code>
      */
     public synchronized boolean setDone(Player player) {
-
+    	
+    	System.out.println("SET DONE");
         if (activePlayers > 0) {
             --activePlayers;
         }
