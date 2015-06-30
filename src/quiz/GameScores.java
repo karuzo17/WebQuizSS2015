@@ -18,7 +18,7 @@ import org.json.JSONObject;
 
 public class GameScores {
 
-	public static  JSONArray array = new JSONArray();
+	public static  JSONArray array;
 	public static ArrayList<Long> ids = new ArrayList<Long>();
 	public static final Map<Long,Long> sortedHash = new LinkedHashMap<Long, Long>();
 	public static Map<Long,Long> tmpHash = new LinkedHashMap<Long, Long>();
@@ -26,6 +26,10 @@ public class GameScores {
 	private static boolean isCalculated=false;
 	
 	public static synchronized void addJSONObject(JSONObject obj){
+		if(array==null){
+			System.out.println("Array neu initialisiert");
+			array= new JSONArray();
+		}
 		System.out.println("gameJSON"+array);
 		array.put(obj);
 //		System.out.println("gameJSON danach"+array);
@@ -102,6 +106,7 @@ public class GameScores {
 			String name1 = (String) obj1.get("username");
 			names.put(id1, name1);
 		}
+		System.out.println("Sorted-Hash:"+sortedHash.size());
 		Map<Long,Long> sortie =sortByValues(sortedHash);
 
 		System.out.println("IDS-SIUZE"+ids.size());
@@ -113,7 +118,9 @@ public class GameScores {
 			json.put("id", id);
 			sorted.put(json);
 		}
+		
 		ids.clear();
+		
 		tmpHash.clear();
 		tmpHash.putAll(sortedHash);
 		sortedHash.clear();

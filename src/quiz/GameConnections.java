@@ -42,6 +42,8 @@ public class GameConnections {
 		System.out.println("Verbindungen in TMP verschoben ");
 		socketliste.clear();
 		System.out.println("alte Verbindungen gelöscht ");
+		GameMode=false;
+		GameOverCount=1;
 	}
 	
 	public static synchronized Map<Long, Session> getMap(){

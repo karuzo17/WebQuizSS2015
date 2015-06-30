@@ -30,17 +30,17 @@ public class QuestHandler extends Thread {
 		
 		System.out.println("Quesgter gestartet");
 		
-//		while(true){
+		while(true){
 			
 			System.out.println("------QUESTER-----------QUESTER______");
 			
-//			synchronized (this) {  //Instanz von 
-//				try {
-//					wait();
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+			synchronized (this) {  //Instanz von 
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				quiz =Quiz.getInstance();
 				Collection<Player> players = quiz.getPlayerList();
 				 Map<Long, Session> map = GameConnections.getMap();
@@ -92,7 +92,8 @@ public class QuestHandler extends Thread {
 			    	
 			    	
 			     }
-			
+			}
+		}
 			
 			
 			

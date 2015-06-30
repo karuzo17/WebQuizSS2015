@@ -142,11 +142,13 @@ public class Login {
 		System.out.println("neue hinzugefuegte Session:"+session);
 		
 		ScoreAgent agent= ScoreAgent.getInstance();
+		System.out.println("Agent gleich "+agent);
 		if(!agent.isAlive()){
 			agent.start();
 			System.out.println("Agent started");
 		}else{
 			
+			System.out.println("In Else");
 			synchronized (agent) {
 				agent.restart();
 			}
@@ -156,7 +158,7 @@ public class Login {
 		JSONObject json = new JSONObject();
 		json.put("PLAYERLIST",GameScores.getInstance());
 		String msg = json.toString();
-		
+		System.out.println("---Ende OnOpen -----");
 		
 	}
 	
@@ -187,6 +189,7 @@ public class Login {
 //				}
 //				resetGame();
 			}
+			
 //			synchronized (agent) {
 //				resetGame();
 //			}
@@ -329,10 +332,22 @@ public class Login {
 				agent = ScoreAgent.getInstance();
 				agent.started=true;
 				GameConnections.GameMode=true;
-				
+				System.out.println("Nach GameMode-Setzen");
 				quester=QuestHandler.getInstance();
+				System.out.println("Quester="+quester);
 				
-				quester.start();
+				
+				if(!quester.isAlive()){
+					quester.start();
+				}
+				synchronized (quester) {
+					if(quester.isAlive()){
+					quester.notify();
+				}
+				}
+				
+				
+				
 				
 
 			
@@ -344,6 +359,7 @@ public class Login {
 		
 		if(blub.keys().next().equals("NEWPLAYER")){
 			quiz = Quiz.getInstance();
+			
 			if (quiz.getPlayerList().size() >= 6) {
 				JSONObject j = new JSONObject();
 				j.put("ERROR", "Maximal_Zahl_Spieler_erreicht");
@@ -354,7 +370,7 @@ public class Login {
 				quiz = Quiz.getInstance();
 				handler = CatalogHandler.getInstance();
 				if (quiz.getCurrentCatalog() != null) {
-					System.out.println("CATALOG schon gesetzt : " + tmpCatalog);
+					System.out.println("CATALOG schon gesetzt : " + quiz.getCurrentCatalog());
 					JSONObject j = new JSONObject();
 					j.put("CATALOG", handler.getCatalogName());
 					session.getBasicRemote().sendText(j.toString());
@@ -374,6 +390,7 @@ public class Login {
 				GameConnections.addSession(session, player.getId());
 
 				if (player.getId() == 0) {
+					System.out.println("LEADER angemeldet, sende Paket");
 					JSONObject j = new JSONObject();
 					j.put("LEADER", true);
 					try {

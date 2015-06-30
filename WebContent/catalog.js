@@ -59,6 +59,17 @@ function initCatListener() {
 		div.addEventListener("click", catalogClicked, false);
 	}
 }
+function removeCatListener() {
+	
+	console.log("remove Cat Listener");
+	var catDiv = document.getElementById("catalog");
+	var divs = catDiv.getElementsByClassName("catalogDiv");
+
+	for (var i = 0; i < divs.length; i++) {
+		var div = document.getElementById("catalog" + i);
+		div.removeEventListener("click", catalogClicked, false);
+	}
+}
 
 function catalogClicked(event) {
 	console.log(event.target.innerHTML);

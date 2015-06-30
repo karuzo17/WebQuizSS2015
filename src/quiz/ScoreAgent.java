@@ -1,6 +1,7 @@
 package quiz;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 
 import javax.websocket.Session;
@@ -9,6 +10,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.fhwgt.quiz.application.Game;
+import de.fhwgt.quiz.application.Player;
+import de.fhwgt.quiz.application.Quiz;
+import de.fhwgt.quiz.error.QuizError;
 
 public class ScoreAgent extends Thread{
 
@@ -21,6 +25,7 @@ public class ScoreAgent extends Thread{
 	public boolean gameover=false;
 	public boolean rank=false;
 	public volatile boolean ready = false;
+	Quiz quiz;
 	ScoreAgent(){
 		
 	}
@@ -96,6 +101,7 @@ public class ScoreAgent extends Thread{
 					if (GameConnections.SessionCount() == 2 && !started
 							&& button && counter == 0) {
 						System.out.println("Start möglich");
+						System.out.println("sende Start Button an Leader");
 						Session leader = GameConnections.getSession((long) 0);
 						JSONObject start = new JSONObject();
 						try {
@@ -162,7 +168,27 @@ public class ScoreAgent extends Thread{
 							e.printStackTrace();
 						}
 					}
-					ready=true;
+//					ready=true;
+					
+					quiz= Quiz.getInstance();
+					Collection<Player> players= quiz.getPlayerList();
+					QuizError error = new QuizError();
+					for(Player p: players){
+						quiz.removePlayer(p, error);
+						if(error.isSet()){
+							System.out.println("Error:"+error.getDescription());
+						}
+					}
+					GameConnections.resetConnections();
+					GameScores.resetScore();
+					gameover=false;
+					rank=false;
+					counter=0;
+					size=0;
+					started=false;
+					
+					System.out.println("Nach reset connections"+GameConnections.SessionCount()+"tmp list "+GameConnections.SessionTMPCount());
+					System.out.println("Nach reset json"+GameScores.getInstance());
 				}
 				
 
