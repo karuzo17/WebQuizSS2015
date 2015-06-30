@@ -1,5 +1,6 @@
 package quiz;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,160 +25,29 @@ import de.fhwgt.quiz.application.Player;
 
 public class GameConnections {
 
-	public static  JSONArray array = new JSONArray();
-	public static ArrayList<Long> ids = new ArrayList<Long>();
 	public static final LinkedHashMap<Long,Session> socketliste = new LinkedHashMap<Long,Session>();  				// Vorsicht unsynchronisiert!!;
 	public static final ArrayList<Session> tmplist= new ArrayList<Session>();
-	public static final LinkedHashMap<Long,String> liste = new LinkedHashMap<Long,String>();  
+
 	public static final Map<Long,Long> sortedHash = new LinkedHashMap<Long, Long>();
 	public static boolean GameMode=false;
-	private static boolean isCalculated=false;
-	private static Map<Long,Integer> ranked = new HashMap<Long, Integer>();
-	
+	public static int GameOverCount=1;
 
+	public static synchronized void resetConnections(){
+
+		for (Long key : socketliste.keySet()) {
+			System.out.println("map and key" + socketliste.get(key));
+			Session s = socketliste.get(key);
+			tmplist.add(s);
+		}
+		System.out.println("Verbindungen in TMP verschoben ");
+		socketliste.clear();
+		System.out.println("alte Verbindungen gelöscht ");
+	}
+	
 	public static synchronized Map<Long, Session> getMap(){
 		return socketliste;
 	}
-	// Synchronisierte Zugriffe auf die Liste
-	public  static synchronized String outputAllSessions(){ 
-		return socketliste.toString(); 
-	}  
-	public  static synchronized String outputAllTMPSessions(){ 
-		return tmplist.toString(); 
-	}  
-	public static synchronized void addJSONObject(JSONObject obj){
-		System.out.println("gameJSON"+array);
-		array.put(obj);
-//		System.out.println("gameJSON danach"+array);
-	}
 
-	public static synchronized void updateJSONScore(long id, long score)
-			throws JSONException {
-		for (int i = 0; i < array.length(); i++) {
-			JSONObject json = array.getJSONObject(i);
-			if (json.getLong("id") == id) {
-				json.put("score", score);
-
-			}
-
-		}
-	}
-	
-	public static void calcRank(){
-		
-		Map<Long,Long> sorted =sortByValues(sortedHash);
-		int i =1;
-		for(Map.Entry<Long,Long> entry : sorted.entrySet()){
-			System.out.println("entrykey"+entry.getKey()+"Vaule"+entry.getValue());
-			ranked.put(entry.getKey(), i);
-			i++;
-		}
-	}
-	public static synchronized int getRank(Session session){
-		//rank ist noch buggy
-		if(!isCalculated){
-			calcRank();
-			isCalculated=true;
-		}
-		long id=getID(session);
-		System.out.println("ID des Spielers"+id);
-		int rank=-1;
-		for(Long key : ranked.keySet()){
-			System.out.println(ranked.get(key));
-			System.out.println("id des spielers"+id);
-			System.out.println("in for"+key);
-			if(id==key){
-				System.out.println("in if");
-				
-				rank = ranked.get(key);
-			}
-			
-			
-		}
-		return rank;
-		
-	}
-	public static synchronized void updateHighScoreList() throws JSONException{
-		
-		System.out.println("---------HighScore-Update-------");
-		JSONArray arj = array;
-		
-		Map<Long,String> names = new LinkedHashMap<Long, String>();
-		JSONArray sorted = new JSONArray();
-		System.out.println("ARRAYJSON"+arj);
-		for (int i = 0; i < arj.length(); i++) {
-			JSONObject obj1 = arj.getJSONObject(i);
-			long score1 = (Long) obj1.get("score");
-			long id1 = (Long) obj1.get("id");
-			sortedHash.put(id1,score1 );
-			String name1 = (String) obj1.get("username");
-			names.put(id1, name1);
-		}
-		Map<Long,Long> sortie =sortByValues(sortedHash);
-
-		System.out.println("IDS-SIUZE"+ids.size());
-		for(int k=0; k<ids.size();k++){
-			JSONObject json = new JSONObject();
-			long  id=ids.get(k);
-			json.put("username",names.get(id));
-			json.put("score", sortie.get(id));	
-			json.put("id", id);
-			sorted.put(json);
-		}
-		ids.clear();
-
-		array=sorted;
-	
-		System.out.println("---------HighScore-Update--ENde------------");
-	}
-	public static <K extends Comparable,V extends Comparable> Map<K,V> sortByValues(Map<K,V> map){
-        List<Map.Entry<K,V>> entries = new LinkedList<Map.Entry<K,V>>(map.entrySet());
-      
-        Collections.sort(entries, new Comparator<Map.Entry<K,V>>() {
-        	
-           
-            public int compare(Entry<K, V> o1, Entry<K, V> o2) {
-                return o1.getValue().compareTo(o2.getValue());
-            }
-        });
-        Collections.reverse(entries);
-        //LinkedHashMap will keep the keys in the order they are inserted
-        //which is currently sorted on natural ordering
-        Map<K,V> sortedMap = new LinkedHashMap<K,V>();
-      
-        for(Map.Entry<K,V> entry: entries){
-            sortedMap.put(entry.getKey(), entry.getValue());
-            ids.add((Long) entry.getKey());
-           
-        }
-      
-        return sortedMap;
-    }
-
-
-		
-		
-	
-	public static synchronized JSONArray getInstance(){
-		return array;
-	}
-	public static synchronized void removeJSONObject(long id) throws JSONException{
-		
-		for(int i=0;i<array.length();i++){
-			JSONObject json =array.getJSONObject(i);
-			if(json.getLong("id")==id){
-				System.out.println("Spieler gefunden an LOOPStelle: "+i);
-				array.remove(i);
-				System.out.println("Array nach löschen"+array);
-			}
-			
-		}
-		
-	}
-	public static synchronized int getJSONArrayCount(){
-		return array.length();
-	}
-	
 	// Verbindung an der Position i holen
     public  static synchronized Session getSession(long i) { 
     	
@@ -234,18 +104,7 @@ public class GameConnections {
     	tmplist.remove(session);
     }
     
-    public static synchronized void updateID(Session session,long ID){
-    	
 
-    	if(socketliste.containsValue(session)){
-    		System.out.println("Füge Spieler mit ID: "+ID +"und der Session: "+session +"hinzu");
-    		socketliste.put(ID, session);
-    		System.out.println("Alter eintrag gelöscht");
-    		System.out.println("get "+socketliste.entrySet());
-    		socketliste.remove((long)-1, session);
-    		System.out.println("Socketliste-Größe: "+socketliste);
-    	}
-    }
     public static synchronized boolean isPlayer(Session s){
     	long id =getID(s);
     	boolean player=false;

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.TimerTask;
 import java.util.logging.ErrorManager;
 
+import javax.swing.Timer;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -22,6 +23,9 @@ import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+
+
 
 
 
@@ -150,14 +154,14 @@ public class Login {
 		
 
 		JSONObject json = new JSONObject();
-		json.put("PLAYERLIST",GameConnections.getInstance());
+		json.put("PLAYERLIST",GameScores.getInstance());
 		String msg = json.toString();
 		
 		
 	}
 	
 	@OnMessage
-    public void loginResponse(Session session, String msg, boolean last) throws JSONException, IOException 
+    public void loginResponse(Session session, String msg, boolean last) throws JSONException, IOException, InterruptedException 
     {
 		System.out.println("----OnMessage---OnMessage---OnMessage----OnMessage-----");
 		
@@ -166,6 +170,33 @@ public class Login {
 		JSONObject blub = new JSONObject(msg);
 		quiz=Quiz.getInstance();
 		Collection<Player> players=quiz.getPlayerList();
+		
+		if (blub.keys().next().equals("GAMEOVER")) {
+			System.out.println("GameOver "+players.size()+"und cunt "+GameConnections.GameOverCount);
+			if(players.size()==GameConnections.GameOverCount){
+			agent.gameover=true;
+			
+			synchronized (agent) {
+				agent.restart();
+				
+//				while(!agent.ready){
+//					wait(1000);
+//				}
+//				if(agent.ready){
+//					resetGame();
+//				}
+//				resetGame();
+			}
+//			synchronized (agent) {
+//				resetGame();
+//			}
+			
+			}
+			GameConnections.GameOverCount=GameConnections.GameOverCount+1;
+			
+		}
+		
+		
 		if (blub.keys().next().equals("QUESTION")) {
 			System.out.println("REQUEST NEUE FrAGE");
 			String question = buildQuestion(session);
@@ -228,8 +259,8 @@ public class Login {
 					if(blub.getLong("RESPONSE")==correctIndex){
 						System.out.println("new Score:"+p.getScore());
 						agent = ScoreAgent.getInstance();
-						GameConnections.updateJSONScore(playerid,p.getScore());
-						GameConnections.updateHighScoreList();
+						GameScores.updateJSONScore(playerid,p.getScore());
+						GameScores.updateHighScoreList();
 						synchronized (agent) {
 								agent.restart();
 						}
@@ -338,7 +369,7 @@ public class Login {
 				obj.put("username", player.getName());
 				obj.put("score", player.getScore());
 				obj.put("id", player.getId());
-				GameConnections.addJSONObject(obj);
+				GameScores.addJSONObject(obj);
 
 				GameConnections.addSession(session, player.getId());
 
@@ -452,14 +483,14 @@ public class Login {
 			System.out.println("Spieler kein Besucher und Spiel noch nicht gestartet ");
 		}
 		else {
-			System.out.println("Spieler gelöscht");
+		
 			long id = GameConnections.getID(session);
 			System.out.println("ID des Spielers" + id);
 			GameConnections.IDRemove(id);
 			JSONObject obj = new JSONObject();
-			System.out.println("ARRRAYJSON" + GameConnections.getInstance());
-			GameConnections.removeJSONObject(id);
-
+			System.out.println("ARRRAYJSON" + GameScores.getInstance());
+			GameScores.removeJSONObject(id);
+			System.out.println("ARRRAYJSON nach remove" + GameScores.getInstance());
 			quiz = Quiz.getInstance();
 			Collection<Player> players = quiz.getPlayerList();
 			QuizError error = new QuizError();
@@ -467,15 +498,20 @@ public class Login {
 				System.out.println("Player schleife");
 				if (p.getId() == id) {
 					System.out.println("SPieler gelöscht");
-					boolean reset = quiz.removePlayer(p, error);
-					System.out.println("Reset"+reset);
-					if(reset){
+					quiz.removePlayer(p, error);
+				
+					if(error.isSet()){
+						System.out.println(error.getDescription());
 						System.out.println("-----RESET-------RESET-------RESET-----RESET");
+						
+//						resetGame();
+						
 					}
+					
 				}
 			}
 
-			System.out.println("new array " + GameConnections.getInstance());
+//			System.out.println("new array " + GameConnections.getInstance());
 
 			ScoreAgent agent = ScoreAgent.getInstance();
 			// agent.start();
@@ -492,10 +528,20 @@ public class Login {
 	}
 	
 	public void sendRanking(){
-		agent.gameover=true;
+		agent.rank=true;
 		
 		synchronized (agent) {
 			agent.restart();
 		}
+		
+		
+	
+	}
+	
+	public void resetGame(){
+		
+		GameConnections.resetConnections();
+		GameScores.resetScore();
+	
 	}
 }

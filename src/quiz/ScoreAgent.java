@@ -19,6 +19,8 @@ public class ScoreAgent extends Thread{
 	public int size=0;
 	public int counter=0;
 	public boolean gameover=false;
+	public boolean rank=false;
+	public volatile boolean ready = false;
 	ScoreAgent(){
 		
 	}
@@ -26,7 +28,7 @@ public class ScoreAgent extends Thread{
 	public void run() {
 		System.out.println("Thread gestartet ");
 
-		while (true) {
+		while (!gameover) {
 
 			System.out.println("ICH laufe ");
 			synchronized (this) { // Instanz von
@@ -36,7 +38,7 @@ public class ScoreAgent extends Thread{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				if (!gameover) {
+				if (!rank) {
 					size = GameConnections.SessionCount();
 					if (size < 2) {
 						System.out.println("Button FALSE FALSE FALSE");
@@ -54,17 +56,18 @@ public class ScoreAgent extends Thread{
 							.println("----ScoreAgent--------ScoreAgent--------");
 					JSONObject json = new JSONObject();
 					try {
-						json.put("PLAYERLIST", GameConnections.getInstance());
+						json.put("PLAYERLIST", GameScores.getInstance());
 					} catch (JSONException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+					System.out.println("PLAYERLIST:"+GameScores.getInstance());
 					String msg = json.toString();
 					// System.out.println("SessionCount"+GameConnections.SessionCount());
-					System.out.println("GAMEConnections"
-							+ GameConnections.outputAllSessions());
-					System.out.println("TMP-Connections"
-							+ GameConnections.outputAllTMPSessions());
+//					System.out.println("GAMEConnections"
+//							+ GameConnections.outputAllSessions());
+//					System.out.println("TMP-Connections"
+//							+ GameConnections.outputAllTMPSessions());
 
 					Map<Long, Session> map = GameConnections.getMap();
 
@@ -116,16 +119,38 @@ public class ScoreAgent extends Thread{
 					System.out.println("Thread fertig");
 				}
 				
+				if(rank && !gameover){
+			Map<Long, Session> map = GameConnections.getMap();
+			System.out.println("Sending Ranks");
+			for (Long key : map.keySet()) {
+				System.out.println("map and key" + map.get(key));
+				Session s = map.get(key);
+				JSONObject obj = new JSONObject();
+				int rank = GameScores.getRank(s);
+				try {
+					obj.put("RANK",rank );
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
+					s.getBasicRemote().sendText(obj.toString());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 				if(gameover){
 					Map<Long, Session> map = GameConnections.getMap();
-
+					System.out.println("Sending Gameover");
 					for (Long key : map.keySet()) {
-						System.out.println("map and key" + map.get(key));
+						System.out.println(" Gamer Over map and key" + map.get(key));
 						Session s = map.get(key);
 						JSONObject obj = new JSONObject();
-						int rank = GameConnections.getRank(s);
+					
 						try {
-							obj.put("RANK",rank );
+							obj.put("GAMEOVER",true );
 						} catch (JSONException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -137,11 +162,15 @@ public class ScoreAgent extends Thread{
 							e.printStackTrace();
 						}
 					}
+					ready=true;
 				}
+				
 
 			}
 		}
 		// }
+		
+		
 		
 	}
 	

@@ -174,7 +174,8 @@ function empfange(message) {
 		createQuestion(question);
 	}
 	if(json.WAIT){
-		alert("Warte bis alle Spieler fertig sind");
+//		alert("Warte bis alle Spieler fertig sind");
+		setMainTextWait();
 	}
 
 	if (json.ERROR) {
@@ -202,13 +203,17 @@ function empfange(message) {
 	
 	if(json.GAMEOVER){
 		//zu implementieren
-		createGameoverScreen();
+		alert("GAMEOVER")
+		defaultSettings();
+		
+		
 	}
 
 	if(json.RANK){
-		console.log("Du hast "+json.RANK+" erreicht");
+//		console.log("Du hast "+json.RANK+" erreicht");
 		//zu implementieren
-		setRankScreen();
+		setMainTextRank(json.RANK);
+		setTimeout(3000,sendGameOver());
 	}
 
 	if(json.ERROR){
@@ -216,6 +221,23 @@ function empfange(message) {
 		//zu implementieren
 		alert(json.ERROR);
 	}
+}
+
+function setMainTextWait() {
+	cleanMain();
+	var waitText = document.createElement("div");
+	waitText.id = "texts";
+	waitText.innerHTML = "GAME OVER! Please wait for the Final result!";
+	document.getElementById("main").appendChild(waitText);
+}
+
+function setMainTextRank(rank) {
+	cleanMain();
+	var rankText = document.createElement("div");
+	rankText.id = "texts";
+	rankText.innerHTML = "You finished on rank " + rank
+			+ "! Congrats and thanks for playing! :)";
+	document.getElementById("main").appendChild(rankText);
 }
 
 function setAnswerBackground(correctA) {
@@ -249,6 +271,12 @@ function createGameStartButton() {
 	Button.addEventListener("click", startGame, false);
 }
 
+function sendGameOver(){
+	var gameover = JSON.stringify({
+		"GAMEOVER" : true
+	});
+	socket.send(gameover);
+}
 function startGame() {
 
 	if (tmpCat) {
@@ -387,6 +415,47 @@ function answerClicked(event) {
 			}
 		}
 	} 
+}
+function defaultSettings() {
+	
+	bereitZumSenden = false;
+	firstPlayer = false;
+	tmpCat = false;
+	firstQuestion = true;
+	waitingForResponse = false;
+	
+	for (var i = 0; i < 6; i++) {
+		document.getElementById("playerCol" + i).innerHTML = "-";
+		document.getElementById("scoreCol" + i).innerHTML = 0;
+		document.getElementById("rows" + i).style.background = "Whitesmoke";
+	}
+
+	var catalogsTMP = document.getElementsByClassName("catalogDiv");
+	for (var j = 0; j < catalogsTMP.length; j++) {
+		document.getElementById("catalog" + j).style.background = "Whitesmoke";
+	}
+
+	var main = document.getElementById("main");
+	document.getElementById("main").innerHTML = "";
+
+	var loginForm = document.createElement("div");
+	loginForm.id = "loginForm";
+
+	main.appendChild(loginForm);
+
+	var loginButton = document.createElement("input");
+	loginButton.type = "button";
+	loginButton.value = "Login";
+	loginButton.id = "loginButton";
+	loginButton.addEventListener("click", send, false);
+
+	var userName = document.createElement("input");
+	userName.type = "text";
+	userName.name = "userName";
+	userName.id = "userName";
+
+	loginForm.appendChild(userName);
+	loginForm.appendChild(loginButton);
 }
 
 function initPlayerTable() {
