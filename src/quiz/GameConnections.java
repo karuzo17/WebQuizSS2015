@@ -1,5 +1,6 @@
 package quiz;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,13 +24,15 @@ import de.fhwgt.quiz.application.Player;
 
 public class GameConnections {
 
-	public static  JSONArray array = new JSONArray();
-	public static ArrayList<Long> ids = new ArrayList<Long>();
 	public static final LinkedHashMap<Long,Session> socketliste = new LinkedHashMap<Long,Session>();  				// Vorsicht unsynchronisiert!!;
 	public static final ArrayList<Session> tmplist= new ArrayList<Session>();
+<<<<<<< HEAD
 	public static final LinkedHashMap<Long,String> liste = new LinkedHashMap<Long,String>();  
 
 	public static final ArrayList<Session> donePlayers =new ArrayList<Session>();
+=======
+
+>>>>>>> Server
 	public static final Map<Long,Long> sortedHash = new LinkedHashMap<Long, Long>();
 	
 	
@@ -41,27 +44,33 @@ public class GameConnections {
 	}
 
 	public static boolean GameMode=false;
-	private static boolean isCalculated=false;
-	private static Map<Long,Integer> ranked = new HashMap<Long, Integer>();
+	public static int GameOverCount=1;
+
+	public static synchronized void resetConnections(){
+
+//		for (Long key : socketliste.keySet()) {
+//			System.out.println("map and key" + socketliste.get(key));
+//			Session s = socketliste.get(key);
+//			tmplist.add(s);
+//		}
+		tmplist.clear();
+		System.out.println("Verbindungen in TMP verschoben ");
+		socketliste.clear();
+		System.out.println("alte Verbindungen gelöscht ");
+		GameMode=false;
+		GameOverCount=1;
+	}
 	
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> Server
 	public static synchronized Map<Long, Session> getMap(){
 		return socketliste;
 	}
-	// Synchronisierte Zugriffe auf die Liste
-	public  static synchronized String outputAllSessions(){ 
-		return socketliste.toString(); 
-	}  
-	public  static synchronized String outputAllTMPSessions(){ 
-		return tmplist.toString(); 
-	}  
-	public static synchronized void addJSONObject(JSONObject obj){
-		System.out.println("gameJSON"+array);
-		array.put(obj);
-//		System.out.println("gameJSON danach"+array);
-	}
 
+<<<<<<< HEAD
 	public static synchronized void updateJSONScore(long id, long score)
 			throws JSONException {
 		for (int i = 0; i < array.length(); i++) {
@@ -184,6 +193,8 @@ public class GameConnections {
 		return array.length();
 	}
 	
+=======
+>>>>>>> Server
 	// Verbindung an der Position i holen
     public  static synchronized Session getSession(long i) { 
     	
@@ -240,18 +251,7 @@ public class GameConnections {
     	tmplist.remove(session);
     }
     
-    public static synchronized void updateID(Session session,long ID){
-    	
 
-    	if(socketliste.containsValue(session)){
-    		System.out.println("Füge Spieler mit ID: "+ID +"und der Session: "+session +"hinzu");
-    		socketliste.put(ID, session);
-    		System.out.println("Alter eintrag gelöscht");
-    		System.out.println("get "+socketliste.entrySet());
-    		socketliste.remove((long)-1, session);
-    		System.out.println("Socketliste-Größe: "+socketliste);
-    	}
-    }
     public static synchronized boolean isPlayer(Session s){
     	long id =getID(s);
     	boolean player=false;
