@@ -359,8 +359,12 @@ public class Login {
 		
 		if(blub.keys().next().equals("NEWPLAYER")){
 			quiz = Quiz.getInstance();
-			
-			if (quiz.getPlayerList().size() >= 6) {
+			if(GameConnections.GameMode){
+				JSONObject j = new JSONObject();
+				j.put("ERROR", "Spiel leider schon im Gange");
+				session.getBasicRemote().sendText(j.toString());
+			} 
+			else if (quiz.getPlayerList().size() >= 6) {
 				JSONObject j = new JSONObject();
 				j.put("ERROR", "Maximal_Zahl_Spieler_erreicht");
 				session.getBasicRemote().sendText(j.toString());

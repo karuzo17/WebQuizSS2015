@@ -239,7 +239,7 @@ function empfange(message) {
 //		console.log("Du hast "+json.RANK+" erreicht");
 		//zu implementieren
 		setMainTextRank(json.RANK);
-		setTimeout(3000,sendGameOver());
+		setTimeout(sendGameOver,3000);
 	}
 
 	if (json.NEWGAME) {
