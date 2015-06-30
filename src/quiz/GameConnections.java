@@ -34,11 +34,12 @@ public class GameConnections {
 
 	public static synchronized void resetConnections(){
 
-		for (Long key : socketliste.keySet()) {
-			System.out.println("map and key" + socketliste.get(key));
-			Session s = socketliste.get(key);
-			tmplist.add(s);
-		}
+//		for (Long key : socketliste.keySet()) {
+//			System.out.println("map and key" + socketliste.get(key));
+//			Session s = socketliste.get(key);
+//			tmplist.add(s);
+//		}
+		tmplist.clear();
 		System.out.println("Verbindungen in TMP verschoben ");
 		socketliste.clear();
 		System.out.println("alte Verbindungen gelöscht ");

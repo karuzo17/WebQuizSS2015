@@ -40,7 +40,7 @@ public class GameScores {
 		
 		ranked.clear();
 		System.out.println("Ranked Cleared");
-		
+		ids.clear();
 		isCalculated=false;
 	}
 
@@ -93,7 +93,7 @@ public class GameScores {
 		
 		System.out.println("---------HighScore-Update-------");
 		JSONArray arj = array;
-		
+		System.out.println("IDS-SIZE"+ids.size());
 		Map<Long,String> names = new LinkedHashMap<Long, String>();
 		JSONArray sorted = new JSONArray();
 		System.out.println("ARRAYJSON"+arj);

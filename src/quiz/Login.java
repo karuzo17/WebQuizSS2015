@@ -498,6 +498,45 @@ public class Login {
 		} 
 		else if(GameConnections.isPlayer(session)&&!GameConnections.GameMode){
 			System.out.println("Spieler kein Besucher und Spiel noch nicht gestartet ");
+			long id = GameConnections.getID(session);
+			System.out.println("ID des Spielers" + id);
+			GameConnections.IDRemove(id);
+			JSONObject obj = new JSONObject();
+			GameScores.removeJSONObject(id);
+			quiz = Quiz.getInstance();
+			Collection<Player> players = quiz.getPlayerList();
+			agent = ScoreAgent.getInstance();
+			QuizError error = new QuizError();
+			for (Player p : players) {
+				System.out.println("Player schleife");
+				if (p.getId() == id) {
+					System.out.println("SPieler gelöscht");
+					quiz.removePlayer(p, error);
+				
+					if(error.isSet()){
+						System.out.println(error.getDescription());
+						System.out.println("-----RESET-------RESET-------RESET-----RESET");
+						
+//						resetGame();
+						agent.gameover=true;
+						synchronized (agent) {
+							agent.restart();
+						}
+					}
+					
+				}
+			}
+			
+			// agent.start();
+			if (!agent.isAlive()) {
+				System.out.println("agent alive ? " + agent.isAlive());
+				agent.start();
+			} else {
+
+				synchronized (agent) {
+					agent.restart();
+				}
+			}
 		}
 		else {
 		
@@ -522,7 +561,10 @@ public class Login {
 						System.out.println("-----RESET-------RESET-------RESET-----RESET");
 						
 //						resetGame();
-						
+						agent.gameover=true;
+						synchronized (agent) {
+							agent.restart();
+						}
 					}
 					
 				}
@@ -530,7 +572,8 @@ public class Login {
 
 //			System.out.println("new array " + GameConnections.getInstance());
 
-			ScoreAgent agent = ScoreAgent.getInstance();
+//			ScoreAgent
+			agent = ScoreAgent.getInstance();
 			// agent.start();
 			if (!agent.isAlive()) {
 				System.out.println("agent alive ? " + agent.isAlive());

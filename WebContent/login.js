@@ -229,7 +229,7 @@ function empfange(message) {
 
 	if(json.GAMEOVER){
 		//zu implementieren
-		alert("GAMEOVER")
+//		alert("GAMEOVER")
 		defaultSettings();
 //		
 		

@@ -68,11 +68,6 @@ public class ScoreAgent extends Thread{
 					}
 					System.out.println("PLAYERLIST:"+GameScores.getInstance());
 					String msg = json.toString();
-					// System.out.println("SessionCount"+GameConnections.SessionCount());
-//					System.out.println("GAMEConnections"
-//							+ GameConnections.outputAllSessions());
-//					System.out.println("TMP-Connections"
-//							+ GameConnections.outputAllTMPSessions());
 
 					Map<Long, Session> map = GameConnections.getMap();
 
@@ -86,6 +81,9 @@ public class ScoreAgent extends Thread{
 							e.printStackTrace();
 						}
 					}
+					quiz= Quiz.getInstance();
+					Collection<Player> players= quiz.getPlayerList();
+		
 					System.out.println("Gäste LOOP"
 							+ GameConnections.SessionTMPCount());
 					for (int i = 0; i < GameConnections.SessionTMPCount(); i++) {
@@ -98,6 +96,7 @@ public class ScoreAgent extends Thread{
 							e.printStackTrace();
 						}
 					}
+				
 					if (GameConnections.SessionCount() == 2 && !started
 							&& button && counter == 0) {
 						System.out.println("Start möglich");
