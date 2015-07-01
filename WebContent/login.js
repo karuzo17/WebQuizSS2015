@@ -1,111 +1,170 @@
+//Eventlistener, der die initLogin()-Funktion beim Laden des Dokumentes aufruft
+//und damit die Initialisierung des Quiz beginnt
 document.addEventListener('DOMContentLoaded', initLogin, false);
+
+//Falls sich ein Spieler per TabClose abmeldet, wir die "onbeforeunload"-Funktion
+//aufgerufen, damit man die Verbindung mithilfe eines Logout-Pakets beenden kann.
 window.onbeforeunload = tabClose;
+
+//Variable zum Verbindungsaufbau
 var socket;
+
+//Zustand des Sockets
 var bereitZumSenden;
+
+//Der erste Spieler bekommt ein "Leader"-Paket und setzt dann diese Variable auf "true",
+//bekommt dann mehr "Rechte" als die anderen Spieler
 var firstPlayer;
+
+//der vor Spielbeginn ausgewählte Katalog, darf beim Klick auf den "GameStart"-Button nicht "" sein
 var tmpCat;
+
+//wird nicht mehr genutzt, hat aber die Laufschrift im Header ermöglicht
 var animation;
+
+//zählt die Sekunden runter, innerhalb der Spieler die Fragen beantworten muss 
 var timer;
+
+//in diese Variable wird die Frage hineinkopiert, damit sie auch an anderen Stellen benutzt werden kann
 var question;
+
+//der Index der Antwort, die der Spieler angeklickt hat und der zum Server zum Überprüfen gesendet wird
 var sendAnswer;
+
+//überprüft ob eine Frage die erste Frage ist, entsprechend werden Fragen erstellt bzw die Tabelle erstellt
 var firstQuestion;
+
+//nachdem der Spieler dem Server seine Antwort auf eine Frage gesendet hat, wartet er auf eine Antwort,
+//in dieser Zeit kann er keine weiteren Antworten  anklicken
 var waitingForResponse;
+
+//speichert den Spielernamen, auf den immer bei der PLAYERLIST überprüft wird, um ihn dann grün zu hinterlegen
 var nameOfPlayer;
 
+//die Funktion wird einmal beim Laden des Dokuments aufgerufen, sie erstellt die Spielertablle unten rechts
+//und initialisiert die defaultSettings, die auch bei einem Neustart nach Beenden des Spiels den Zustand zurücksetzt
 function initLogin() {
 
 	initPlayerTable();
 	defaultSettings();
-//	setConnection();
 }
 
+//verbindet den Client mit dem Server
 function setConnection(){
+	
+	//die URL zum Server
 	var url = 'ws://localhost:8080/WebQuizSS15/Login';
-
+	
+	//neue Verbindung wird hergestellt
 	socket = new WebSocket(url);
 
+	//die Zustände des Sockets werden mit entsprechenden Funktionen behandelt
 	socket.onopen = sendenMoeglich;
 	socket.onclose = Closing;
 	socket.onerror = ErrorHandler;
 	socket.onmessage = empfange;
 }
 
+//allgemeinde Standardeinstellungen, bevor ein Spiel gestartet wird
 function defaultSettings() {
 	
+	//siehe Erklärung am Dateibeginn
 	bereitZumSenden = false;
 	firstPlayer = false;
 	tmpCat = false;
 	firstQuestion = true;
 	waitingForResponse = false;
 	
+	//Diese Schleife geht durch die komplette Spielertabelle und setzt Namen auf "", Punkte 
+	//auf 0 und den Hintergrund auf den Standard "Whitesmoke"
 	for (var i = 0; i < 6; i++) {
 		document.getElementById("playerCol" + i).innerHTML = "-";
 		document.getElementById("scoreCol" + i).innerHTML = 0;
 		document.getElementById("rows" + i).style.background = "Whitesmoke";
 	}
 
+	//der zuvor ausgewählte Katalog wird nicht mehr gehighlightet.
 	var catalogsTMP = document.getElementsByClassName("catalogDiv");
 	for (var j = 0; j < catalogsTMP.length; j++) {
 		document.getElementById("catalog" + j).style.background = "Whitesmoke";
 	}
-
+	
+	//der Div, der für die Textausgabe in der "main"-Section zuständig ist, wird auf den default 
+	//gesetzt
 	var main = document.getElementById("main");
 	document.getElementById("main").innerHTML = "";
-
+	
+	//dem "main"-Div wird nach Reset die Anmeldemöglichkeit wiederhergestellt und angehängt
 	var loginForm = document.createElement("div");
 	loginForm.id = "loginForm";
-
 	main.appendChild(loginForm);
 
+	//Login-button wird erzeugt
 	var loginButton = document.createElement("input");
 	loginButton.type = "button";
 	loginButton.value = "Login";
 	loginButton.id = "loginButton";
 	loginButton.addEventListener("click", send, false);
 
+	//input-Feld für den Benutzernamen wird erzeugt
 	var userName = document.createElement("input");
 	userName.type = "text";
 	userName.name = "userName";
 	userName.id = "userName";
 
+	//button und inputfeld werden loginForm hinzugefügt
 	loginForm.appendChild(userName);
 	loginForm.appendChild(loginButton);
+	
+	//Verbindung zum Server wird hergestellt
 	setConnection();
 }
 
-
+//wird aufgerrufen wenn der Login-button geklickt wurde
 function send(event) {
 	
+	//button der geklickt wurde
 	var button = event.target;
+	
+	//Spielername, der dem Server gesendet werde soll
 	var outmessage = window.document.getElementById("userName").value;
+	
+	//mit der Variable wird auf schon vorhandene Namen reagiert
 	var nameUsed = false;
 	var playerCols = document.getElementsByClassName("playerCol");
 
+	//alle bisher angemeldeten Spieler werden auf den eingegebenen Namen überprüft
 	for (var i = 0; i < playerCols.length; i++) {
-
 		if (document.getElementById("playerCol" + i).innerHTML === outmessage) {
 			alert("Name schon vergeben");
 			nameUsed = true;
 		}
 	}
 
+	//falls das input-Feld nicht null ist und der name nicht schon verwendet, wird dem 
+	//Server ein NEWPLAYER-Paket gesendet
 	if (!nameUsed && outmessage !== "") {
 
+		//erstellen des JSON-Objekts
 		var newPlayer = JSON.stringify({
 			"NEWPLAYER" : outmessage
 		});
-		// var string = newPlayer;
-		// var obj = JSON.parse(string);
+		
+		//Spielername wird gespeichert, damit der Client weiß wie er heißt
 		nameOfPlayer = outmessage;
 
+		//senden des Objekts
 		if (bereitZumSenden == true) {
 			socket.send(newPlayer);
+			
+			//entfernen des Login-buttons, und einblenden des Wartetexts
 			removeLoginButton();
 		} else
 			alert("Server noch nicht bereit zum Empfangen. Bitte nochmals versuchen");
 	}
 }
 
+//Verbindung ist erstellt und senden möglich
 function sendenMoeglich() {
 	
 	bereitZumSenden = true;
@@ -113,25 +172,30 @@ function sendenMoeglich() {
 }
 
 function ErrorHandler(event) {
-	
 }
 
+//diese Funktion ist durch die Benutzung der tabClose(event)-Funktion überfällig (wenn auch nicht für
+//alle Arten)
 function Closing(event) {
-
 }
 
+//sendet dem Server ein LOGOUT-Paket, bevor die Verbindung abgebrochen wird
 function tabClose(event) {
+	
 	var string = JSON.stringify({
 		"LOGOUT" : true
 	});
 	socket.send(string);
 }
 
+//Funktion die Pakete vom Server empfängt und entsprechend weitere Funktionen aufruft
 function empfange(message) {
 
+	//auslesen des Paketinhalts
 	var text = message.data;
 	var json = JSON.parse(text);
 
+	//bekommt ein Client ein CATALOG-Paket, wird der dort erwähnte Katalog gehighlightet
 	if (json.CATALOG) {
 
 		console.log("Hab katalog bekommen");
@@ -141,21 +205,15 @@ function empfange(message) {
 			tmpCat = true;
 		}
 	}
-
+	
+	//diese Funktion ist für die Darstellung der Highscoretabelle zuständig
 	if (json.PLAYERLIST) {
 		
-		console.log("PlayerListLength: " + json.PLAYERLIST.length);
-		console.log("playerliste"+json.PLAYERLIST);
 		var playerTable = document.getElementById("playerTable");
 
+		//setzt Namen und Punkt an Stellen in denen Spieler angemeldet sind, ansonsten wird die
+		//Tabelle mit default-Werten belegt
 		for (var i = 0; i < 6; i++) {
-
-//			if (json.PLAYERLIST[i].username == nameOfPlayer) {
-//				document.getElementById("rows" + i).style.background = "#7C907A";
-//			} else {
-//				document.getElementById("rows" + i).style.background = "Whitesmoke";
-//			}
-
 			if (i < json.PLAYERLIST.length) {
 				document.getElementById("playerCol" + i).innerHTML = json.PLAYERLIST[i].username;
 				document.getElementById("scoreCol" + i).innerHTML = json.PLAYERLIST[i].score;
@@ -165,26 +223,29 @@ function empfange(message) {
 			}
 		}
 		
+		//alle Tabellenzeilen werden mit dem Standard hintergrund versehen...
 		for(var k=0; k< 6;k++){
 			document.getElementById("rows" + k).style.background = "Whitesmoke";
 		}
+		
+		//... damit im nächsten Schritt die Zeile mit dem eigenen Spielernamen gehighlightet werden kann
 		for(var j =0 ; j <json.PLAYERLIST.length;j++){
-			console.log("schleife ");
 			if (json.PLAYERLIST[j].username == nameOfPlayer) {
 				document.getElementById("rows" + j).style.background = "#7C907A";
-//			} else {
-//				document.getElementById("rows" + j).style.background = "Whitesmoke";
-//			}
+			}
 		}
 	}
-	}
 
+	//nur der Spielleiter bekommt das Paket, er erhält einen GameStart-Button und besitzt nun so die Möglichkeit
+	//das Spiel zu starten
 	if (json.GAMESTART) {
 
 		console.log("spiel kann gestartet werden");
 		createGameStartButton();
 	}
 
+	//der Spielleiter erhält dieses Paket, infolge dessen erhält er Privilegien und kann so zB. Kataloge
+	//auswählen
 	if (json.LEADER) {
 
 		firstPlayer = true;
@@ -192,62 +253,66 @@ function empfange(message) {
 		setLeaderText();
 	}
 
+	//Frage, die jeder Client darstellt
 	if (json.QUESTION) {
 
+		//bei der ersten Frage wird einmalig die Tabelle zur Fragendarstellung gestellt
 		if (firstQuestion) {
 			firstQuestion = false;
 			cleanMain();
 			tableCreate();
 		}
 
+		//falls es nicht die erste Frage ist wird die Tabelle nur aktualisiert
 		var question = json.QUESTION;
 		createQuestion(question);
 	}
 
+	//nach Beantwortung aller Fragen wartet der Client, bis ALLE Spieler fertig sind
 	if (json.WAIT) {
 		
 		setMainTextWait();
 	}
 
+	//Error-Pakete werden ausgegeben
 	if (json.ERROR) {
 
 		alert("Got error: " + json.ERROR);
 	}
 
+	//Paket des Servers, das die korrekte Antwort auf die letzte Frage enthält
 	if (json.RESPONSE) {
 
 		console.log("Hab die Antwort erhalten");
+		
+		//auslesen des korrekten Index
 		var correctAnswer = json.RESPONSE;
 
+		//Hintergrund der Antworten entsprechend anpasse (grün hinterlegen für korrekt,
+		//rot für falsch)
 		setAnswerBackground(correctAnswer);
 
-		console.log("korrekte Antwort" + correctAnswer);
-		console.log("gewähöte Antwort" + sendAnswer);
-
+		//nach einem Timeout zur Darstellung der Lösung wird nach einer neuen Frage verlangt
 		setTimeout(sendResponse, 3000);
 	}
 
+	//nach der Darstellung der RANKS bei Spielende wird bei Empfang des GAMEOVER-Pakets der
+	//default-Zustand wiederhergestellt
 	if(json.GAMEOVER){
-		//zu implementieren
-//		alert("GAMEOVER")
+
 		defaultSettings();
-//		
-		
 	}
 
+	//der Rang nach Spielende wird dem Client mitgeteilt, nach einem Timeout wird dem Server ein 
+	//GAMEOVER-Paket gesendet
 	if(json.RANK){
-//		console.log("Du hast "+json.RANK+" erreicht");
-		//zu implementieren
+
 		setMainTextRank(json.RANK);
 		setTimeout(sendGameOver,3000);
 	}
-
-	if (json.NEWGAME) {
-
-		defaultSettings();
-	}
 }
 
+//nach Beantwortung einer Frage sendet der Client ein QUESTION-Paket, mit der er eine neue anfordert
 function sendResponse() {
 
 	waitingForResponse = false;
@@ -257,9 +322,9 @@ function sendResponse() {
 	socket.send(question);
 }
 
+//die "divs" der jeweiligen Antworten werden entsprechend der eigenen Antwort hinterlegt (oder aber es wurde
+//keine Antwort gegeben (sendAnswer ===4))
 function setAnswerBackground(correctA) {
-
-	console.log("answer background");
 
 	var cols = document.getElementsByClassName("cols");
 
@@ -273,37 +338,49 @@ function setAnswerBackground(correctA) {
 	}
 }
 
+//sobald zwei Spieler angemeldet sind, bekommt der Spielleiter die Möglichkeit das Spiel zu starten
 function createGameStartButton() {
 
+	//erstellen des Buttons
 	var Button = document.createElement("input");
 	Button.type = "button";
 	Button.value = "Start Game";
 	Button.id = "Button";
 
+	//hinzufügen des Buttons
 	var loginDiv = document.getElementById("loginForm");
 	loginDiv.appendChild(Button);
 	Button.addEventListener("click", startGame, false);
 }
 
+//wird aufgerufen wenn der Spielleiter den StartGame-Button klickt
 function startGame() {
 
+	//falls schon ein Katalog ausgewählt wurde wird das entsprechende Paket gesendet
 	if (tmpCat) {
 		console.log("ALARM START ");
 		var start = JSON.stringify({
 			"GAMESTART" : true
 		});
 		socket.send(start);
+		
+		//bei Neustart des Spiels dürfen alle Clients nicht in der Lage sein, Kataloge
+		//auszuwählen, der einzige im Spiel (Spielleiter) bekommt hier die Rechte entzogen
 		removeCatListener();
 	} else {
 		alert("first pick cat!");
 	}
 }
+
+//wird gesendet nachdem der RANK angezeigt wurde
 function sendGameOver(){
 	var gameover = JSON.stringify({
 		"GAMEOVER" : true
 	});
 	socket.send(gameover);
 }
+
+//sendet den aktuell ausgewählten Katalog des Spielleiters zum Server, der diesen dann weiterverteilt
 function catalogSelected(name) {
 
 	tmpCat = true;
@@ -313,6 +390,7 @@ function catalogSelected(name) {
 	socket.send(cat);
 }
 
+//die "main"-Section wird von allen ChildNodes befreit, damit die Fragentabelle erstellt werden kann
 function cleanMain() {
 	var mainSection = document.getElementById("main");
 
@@ -321,6 +399,7 @@ function cleanMain() {
 	}
 }
 
+//schreibt die aktuelle Frage in die Tabelle 
 function createQuestion(questionFromServer) {
 
 	for (var aC = 0; aC < 4; aC++) {
