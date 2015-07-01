@@ -47,7 +47,8 @@ public class CatalogServlet extends HttpServlet {
      super();
      System.out.println("catServlet");
 //     FilesystemLoader loader = new FilesystemLoader("/Users/derLu/WebProg/EclipseWorkspace/WebQuizSS2015/WebContent/WEB-INF/Kataloge");
-     FilesystemLoader loader = new FilesystemLoader("/Users/TIm/Downloads/WebQuiz2015/WebContent/WEB-INF/Kataloge");
+     FilesystemLoader loader = new FilesystemLoader("/home/PRJ/svn/webprog/g06/www/tomcat/WEB-INF/Kataloge");
+//     FilesystemLoader loader = new FilesystemLoader("/Users/TIm/Downloads/WebQuiz2015/WebContent/WEB-INF/Kataloge");
      quiz = Quiz.getInstance();
      quiz.initCatalogLoader(loader);
 

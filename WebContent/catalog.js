@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', init, false);
 function init() {
 
 	request = new XMLHttpRequest();
-	request.open("GET", "/WebQuizSS15/catalogs", true);
+	request.open("GET", "http://fbe-wwwdev.hs-weingarten.de:8080/webprog06/tomcat/catalogs", true);
+//	request.open("GET", "/catalogs", true);
 	request.onreadystatechange = handler;
 	request.send();
 }

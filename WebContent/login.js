@@ -20,7 +20,8 @@ function initLogin() {
 }
 
 function setConnection(){
-	var url = 'ws://localhost:8080/WebQuizSS15/Login';
+//	http://fbe-wwwdev.hs-weingarten.de:8080/webprog<groupnr>/tomcat 
+	var url = 'ws://fbe-wwwdev.hs-weingarten.de:8080/webprog06/tomcat/Login';
 
 	socket = new WebSocket(url);
 
